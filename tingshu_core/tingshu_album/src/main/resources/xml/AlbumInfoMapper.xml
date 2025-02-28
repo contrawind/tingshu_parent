@@ -3,43 +3,47 @@
 <mapper namespace="com.atguigu.mapper.AlbumInfoMapper">
 
     <select id="getUserAlbumByPage" resultType="com.atguigu.vo.AlbumTempVo">
+        <!-- 查询字段 -->
         select
-        c.albumId,
-        c.albumTitle,
-        c.coverUrl,
-        c.includeTrackCount,
-        c.status,
-        c.createTime,
-        MAX(IF(c.statType = '0401', c.statNum, 0)) as playStatNum,
-        MAX(IF(c.statType = '0402', c.statNum, 0)) as subscribeStatNum,
-        MAX(IF(c.statType = '0403', c.statNum, 0)) as buyStatNum,
-        MAX(IF(c.statType = '0404', c.statNum, 0)) as commentStatNum
-        from (SELECT
-        a.id AS albumId,
-        a.album_title AS albumTitle,
-        a.cover_url AS coverUrl,
-        a.include_track_count AS includeTrackCount,
-        a.STATUS,
-        a.create_time AS createTime,
-        b.stat_type AS statType,
-        b.stat_num AS statNum
+        c.albumId,          -- 专辑ID
+        c.albumTitle,       -- 专辑标题
+        c.coverUrl,         -- 专辑封面图片URL
+        c.includeTrackCount,-- 专辑包含的音轨数量
+        c.status,           -- 专辑状态
+        c.createTime,       -- 专辑创建时间
+        MAX(IF(c.statType = '0401', c.statNum, 0)) as playStatNum,      -- 播放量统计（statType 为 '0401' 时的 statNum，否则为 0）
+        MAX(IF(c.statType = '0402', c.statNum, 0)) as subscribeStatNum, -- 订阅量统计（statType 为 '0402' 时的 statNum，否则为 0）
+        MAX(IF(c.statType = '0403', c.statNum, 0)) as buyStatNum,       -- 购买量统计（statType 为 '0403' 时的 statNum，否则为 0）
+        MAX(IF(c.statType = '0404', c.statNum, 0)) as commentStatNum   -- 评论量统计（statType 为 '0404' 时的 statNum，否则为 0）
+        from (
+        -- 子查询：获取专辑基础信息和统计信息
+        SELECT
+        a.id AS albumId,               -- 专辑ID
+        a.album_title AS albumTitle,   -- 专辑标题
+        a.cover_url AS coverUrl,       -- 专辑封面图片URL
+        a.include_track_count AS includeTrackCount, -- 专辑包含的音轨数量
+        a.STATUS,                      -- 专辑状态
+        a.create_time AS createTime,   -- 专辑创建时间
+        b.stat_type AS statType,       -- 统计类型（如播放、订阅、购买、评论）
+        b.stat_num AS statNum          -- 统计数值
         FROM
-        album_info a
-        LEFT JOIN album_stat b ON a.id = b.album_id
+        album_info a                  -- 专辑信息表
+        LEFT JOIN album_stat b ON a.id = b.album_id -- 左连接专辑统计表，获取统计信息
         <where>
+            <!-- 动态条件过滤 -->
             <if test="albumInfoQuery.userId != null">
-                and a.user_id = #{albumInfoQuery.userId}
+                and a.user_id = #{albumInfoQuery.userId} -- 根据用户ID过滤专辑
             </if>
             <if test="albumInfoQuery.albumTitle != null and albumInfoQuery.albumTitle != ''">
-                and a.album_title like CONCAT('%',#{albumInfoQuery.albumTitle},'%')
+                and a.album_title like CONCAT('%',#{albumInfoQuery.albumTitle},'%') -- 根据专辑标题模糊查询
             </if>
             <if test="albumInfoQuery.status != null and albumInfoQuery.status != ''">
-                and a.status = #{albumInfoQuery.status}
+                and a.status = #{albumInfoQuery.status} -- 根据专辑状态过滤
             </if>
-            and a.is_deleted = 0
+            and a.is_deleted = 0 -- 确保专辑未被删除
         </where>
         ) c
-        GROUP BY c.albumId
-        order by c.createTime desc
+        GROUP BY c.albumId -- 按专辑ID分组，统计每个专辑的播放、订阅、购买、评论数量
+        order by c.createTime desc -- 按创建时间降序排列
     </select>
 </mapper>

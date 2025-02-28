@@ -15,7 +15,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import lombok.extern.slf4j.Slf4j;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -29,6 +31,7 @@ import java.util.List;
 @Tag(name = "分类管理")
 @RestController
 @RequestMapping(value = "/api/album/category")
+@Slf4j
 public class CategoryController {
 
     @Autowired
@@ -41,8 +44,19 @@ public class CategoryController {
     @Operation(summary = "获取全部分类信息")
     @GetMapping("getAllCategoryList")
     public RetVal getAllCategoryList() {
-        List<CategoryVo> categoryVoList = categoryViewService.getAllCategoryList();
-        return RetVal.ok(categoryVoList);
+        try {
+            log.info("开始获取分类列表");
+            List<CategoryVo> categoryVoList = categoryViewService.getAllCategoryList();
+            if (categoryVoList == null || categoryVoList.isEmpty()) {
+                log.warn("未查询到分类数据");
+                return RetVal.ok(new ArrayList<>());
+            }
+            log.info("成功获取到{}个一级分类", categoryVoList.size());
+            return RetVal.ok(categoryVoList);
+        } catch (Exception e) {
+            log.error("获取分类列表失败", e);
+            return RetVal.fail().message("获取分类列表失败");
+        }
     }
 
     @Operation(summary = "根据一级分类Id查询分类属性信息")

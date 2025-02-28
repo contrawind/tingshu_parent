@@ -10,6 +10,7 @@ import com.atguigu.service.AlbumAttributeValueService;
 import com.atguigu.service.AlbumInfoService;
 import com.atguigu.service.AlbumStatService;
 import com.atguigu.util.AuthContextHolder;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,6 +33,51 @@ public class AlbumInfoServiceImpl extends ServiceImpl<AlbumInfoMapper, AlbumInfo
     private AlbumAttributeValueService albumAttributeValueService;
     @Autowired
     private AlbumStatService albumStatService;
+
+    @Override
+    public AlbumInfo getAlbumInfoById(Long albumId) {
+        //根据主键id查询id信息
+        AlbumInfo albumInfo = getById(albumId);
+        LambdaQueryWrapper<AlbumAttributeValue> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(AlbumAttributeValue::getAlbumId, albumId);
+        List<AlbumAttributeValue> albumAttributeValueList = albumAttributeValueService.list(wrapper);
+        albumInfo.setAlbumPropertyValueList(albumAttributeValueList);
+        return albumInfo;
+    }
+
+    @Override
+    public void updateAlbumInfo(AlbumInfo albumInfo) {
+        //修改专辑基本信息
+        updateById(albumInfo);
+        //删除原有专辑标签属性信息
+        LambdaQueryWrapper<AlbumAttributeValue> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(AlbumAttributeValue::getAlbumId, albumInfo.getId());
+        albumAttributeValueService.remove(wrapper);
+        //保存专辑标签属性
+        List<AlbumAttributeValue> albumPropertyValueList = albumInfo.getAlbumPropertyValueList();
+        if (!CollectionUtils.isEmpty(albumPropertyValueList)) {
+            for (AlbumAttributeValue albumAttributeValue : albumPropertyValueList) {
+                //设置专辑id
+                albumAttributeValue.setAlbumId(albumInfo.getId());
+            }
+            albumAttributeValueService.saveBatch(albumPropertyValueList);
+        }
+        //TODO
+    }
+
+
+    @Override
+    public void deleteAlbumInfo(Long albumId) {
+        //删除专辑基本信息
+        removeById(albumId);
+        //删除专辑标签属性信息
+        LambdaQueryWrapper<AlbumAttributeValue> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(AlbumAttributeValue::getAlbumId, albumId);
+        albumAttributeValueService.remove(wrapper);
+        //删除专辑统计信息
+        albumStatService.remove(new LambdaQueryWrapper<AlbumStat>().eq(AlbumStat::getAlbumId, albumId));
+        //TODO
+    }
 
     @Transactional//写入要么全部成功，要么全部回滚，避免因部分失败导致脏数据或逻辑错误
     @Override

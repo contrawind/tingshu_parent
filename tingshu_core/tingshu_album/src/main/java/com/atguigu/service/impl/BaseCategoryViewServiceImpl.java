@@ -6,7 +6,9 @@ import com.atguigu.service.BaseCategoryViewService;
 
 import com.atguigu.vo.CategoryVo;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +24,11 @@ import java.util.stream.Collectors;
  * @since 2025-02-19
  */
 @Service
+@Slf4j
 public class BaseCategoryViewServiceImpl extends ServiceImpl<BaseCategoryViewMapper, BaseCategoryView> implements BaseCategoryViewService {
+
+    @Autowired
+    private BaseCategoryViewMapper baseCategoryViewMapper;
 
     //@Override
 //    public List<CategoryVo> getAllCategoryList1() {
@@ -68,6 +74,9 @@ public class BaseCategoryViewServiceImpl extends ServiceImpl<BaseCategoryViewMap
 
     @Override
     public List<CategoryVo> getAllCategoryList() {
-        return baseMapper.getAllCategoryList();
+        log.info("开始查询所有分类信息");
+        List<CategoryVo> categoryList = baseCategoryViewMapper.getAllCategoryList();
+        log.info("查询到的分类信息: {}", categoryList);
+        return categoryList;
     }
 }

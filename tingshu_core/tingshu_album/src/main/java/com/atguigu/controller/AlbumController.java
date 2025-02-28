@@ -39,6 +39,7 @@ public class AlbumController {
 
     /**
      * 新增专辑接口
+     *
      * @param albumInfo 通过请求体接收的专辑信息JSON对象
      * @return 统一响应格式（操作成功）
      */
@@ -54,8 +55,9 @@ public class AlbumController {
 
     /**
      * 用户专辑分页查询接口
-     * @param pageNum 当前页码（从路径获取）
-     * @param pageSize 每页显示条数（从路径获取）
+     *
+     * @param pageNum        当前页码（从路径获取）
+     * @param pageSize       每页显示条数（从路径获取）
      * @param albumInfoQuery 查询条件对象（从请求体获取，可选）
      * @return 带分页数据的统一响应格式
      */
@@ -81,5 +83,27 @@ public class AlbumController {
 
         // 返回分页结果
         return RetVal.ok(pageParam);
+    }
+
+    @Operation(summary = "根据id查询专辑信息")
+    @GetMapping("getAlbumInfoById/{albumId}")
+    public RetVal getAlbumInfoById(@PathVariable Long albumId) {
+        AlbumInfo albumInfo = albumInfoService.getAlbumInfoById(albumId);
+        return RetVal.ok(albumInfo);
+    }
+
+    @Operation(summary = "修改专辑")
+    @PutMapping("updateAlbumInfo")
+    public RetVal updateAlbumInfo(@RequestBody AlbumInfo albumInfo) {
+        albumInfoService.updateAlbumInfo(albumInfo);
+        //修改成功之后应该返回true或false
+        return RetVal.ok();
+    }
+
+    @Operation(summary = "删除专辑")
+    @DeleteMapping("deleteAlbumInfo/{albumId}")
+    public RetVal deleteAlbumInfo(@PathVariable Long albumId) {
+        albumInfoService.deleteAlbumInfo(albumId);
+        return RetVal.ok();
     }
 }
