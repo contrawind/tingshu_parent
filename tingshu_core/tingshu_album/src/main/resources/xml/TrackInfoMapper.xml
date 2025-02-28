@@ -2,4 +2,65 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.atguigu.mapper.TrackInfoMapper">
 
+    <!-- 分页查询用户音轨记录及统计信息 -->
+    <!-- 输入参数：trackInfoQuery（用户ID/音轨标题/状态） -->
+    <!-- 输出结果：TrackTempVo（聚合播放/收藏/点赞/评论统计） -->
+    <select id="findUserTrackPage" resultType="com.atguigu.vo.TrackTempVo">
+        <!-- 核心逻辑说明 -->
+        <!-- 1. 三表关联查询（track_info + track_stat + album_info） -->
+        <!-- 2. 动态条件过滤（用户ID/音轨标题模糊查询/状态） -->
+        <!-- 3. 使用MAX+IF条件聚合统计项 -->
+        <!-- 4. 结果按创建时间排序 -->
+        select
+        any_value(d.albumId) as albumId,          <!-- 专辑ID（取任意值，因分组保证唯一） -->
+        d.albumTitle,                             <!-- 专辑标题 -->
+        d.trackId,                                <!-- 音轨唯一标识 -->
+        d.trackTitle,                             <!-- 音轨标题 -->
+        d.coverUrl,                               <!-- 封面（优先音轨封面，次选专辑封面） -->
+        d.mediaDuration,                          <!-- 音轨时长（单位：秒） -->
+        d.status,                                 <!-- 音轨状态（0-下架 1-上架） -->
+        d.createTime,                             <!-- 创建时间 -->
+        MAX(IF(d.statType = '0701', d.statNum, 0)) as playStatNum,    <!-- 播放统计（0701类型） -->
+        MAX(IF(d.statType = '0702', d.statNum, 0)) as collectStatNum, <!-- 收藏统计（0702类型） -->
+        MAX(IF(d.statType = '0703', d.statNum, 0)) as praiseStatNum,  <!-- 点赞统计（0703类型） -->
+        MAX(IF(d.statType = '0704', d.statNum, 0)) as commentStatNum  <!-- 评论统计（0704类型） -->
+        from (
+        SELECT
+        c.id AS albumId,                      <!-- 专辑ID -->
+        c.album_title AS albumTitle,           <!-- 专辑标题 -->
+        a.id AS trackId,                      <!-- 音轨ID -->
+        a.track_title AS trackTitle,           <!-- 音轨标题 -->
+        a.media_duration AS mediaDuration,    <!-- 音轨时长 -->
+        <!-- 封面地址逻辑：音轨无封面时使用专辑封面 -->
+        IF ( a.cover_url IS NULL OR a.cover_url = '', c.cover_url, a.cover_url ) AS coverUrl,
+        a.STATUS,                             <!-- 数据状态 -->
+        a.create_time AS createTime,           <!-- 创建时间 -->
+        b.stat_type AS statType,               <!-- 统计类型编码 -->
+        b.stat_num AS statNum                  <!-- 统计数值 -->
+        FROM
+        track_info a                           <!-- 主表：音轨信息表 -->
+        LEFT JOIN track_stat b ON a.id = b.track_id  <!-- 关联统计表（1对多关系） -->
+        LEFT JOIN album_info c ON a.album_id = c.id  <!-- 关联专辑表（获取专辑信息） -->
+        <where>
+            <!-- 用户ID过滤条件 -->
+            <if test="trackInfoQuery.userId != null">
+                and a.user_id = #{trackInfoQuery.userId}
+            </if>
+            <!-- 音轨标题模糊查询（前后模糊匹配） -->
+            <if test="trackInfoQuery.trackTitle != null and trackInfoQuery.trackTitle != ''">
+                and a.track_title like CONCAT('%',#{trackInfoQuery.trackTitle},'%')
+            </if>
+            <!-- 状态过滤（空值不过滤） -->
+            <if test="trackInfoQuery.status != null and trackInfoQuery.status != ''">
+                and a.status = #{trackInfoQuery.status}
+            </if>
+            <!-- 软删除标记（0-有效数据） -->
+            and a.is_deleted = 0
+        </where>
+        ) d
+        <!-- 按音轨ID分组，保证结果集唯一性 -->
+        GROUP BY d.trackId
+        <!-- 默认排序规则：按创建时间正序 -->
+        ORDER BY d.createTime
+    </select>
 </mapper>

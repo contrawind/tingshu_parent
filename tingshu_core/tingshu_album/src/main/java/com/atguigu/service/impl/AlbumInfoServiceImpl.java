@@ -1,6 +1,7 @@
 package com.atguigu.service.impl;
 
 import com.alibaba.nacos.client.naming.utils.CollectionUtils;
+import com.atguigu.constant.RedisConstant;
 import com.atguigu.constant.SystemConstant;
 import com.atguigu.entity.AlbumAttributeValue;
 import com.atguigu.entity.AlbumInfo;
@@ -12,7 +13,11 @@ import com.atguigu.service.AlbumStatService;
 import com.atguigu.util.AuthContextHolder;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,6 +42,31 @@ public class AlbumInfoServiceImpl extends ServiceImpl<AlbumInfoMapper, AlbumInfo
     @Override
     public AlbumInfo getAlbumInfoById(Long albumId) {
         //根据主键id查询id信息
+        // AlbumInfo albumInfo = getAlbumInfoFromDB(albumId);
+        //融入redis
+        AlbumInfo albumInfo = getAlbumInfoFromRedis(albumId);
+        return albumInfo;
+    }
+
+    @Autowired
+    private RedisTemplate redisTemplate;
+
+    private AlbumInfo getAlbumInfoFromRedis(Long albumId) {
+        redisTemplate.setKeySerializer(new StringRedisSerializer());
+        GenericJackson2JsonRedisSerializer jackson2JsonRedisSerializer = new GenericJackson2JsonRedisSerializer();
+        redisTemplate.setValueSerializer(jackson2JsonRedisSerializer);
+        //定义key
+        String cacheKey = RedisConstant.ALBUM_INFO_PREFIX + albumId;
+        AlbumInfo albumInfoRedis = (AlbumInfo) redisTemplate.opsForValue().get(cacheKey);
+        if (albumInfoRedis == null) {
+            AlbumInfo albumInfoDB = getAlbumInfoFromDB(albumId);
+            redisTemplate.opsForValue().set(cacheKey, albumInfoDB);
+            return albumInfoDB;
+        }
+        return albumInfoRedis;
+    }
+
+    private @NotNull AlbumInfo getAlbumInfoFromDB(Long albumId) {
         AlbumInfo albumInfo = getById(albumId);
         LambdaQueryWrapper<AlbumAttributeValue> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(AlbumAttributeValue::getAlbumId, albumId);
