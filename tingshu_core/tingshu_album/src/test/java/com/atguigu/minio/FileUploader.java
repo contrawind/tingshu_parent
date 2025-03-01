@@ -12,7 +12,7 @@ public class FileUploader {
             // Create a minioClient with the MinIO server playground, its access key and secret key.
             MinioClient minioClient =
                     MinioClient.builder()
-                            .endpoint("http://192.168.168.129:9000")
+                            .endpoint("http://192.168.168.131:9000")
                             .credentials("enjoy6288", "enjoy6288")
                             .build();
 

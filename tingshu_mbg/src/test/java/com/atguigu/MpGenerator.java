@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.generator.FastAutoGenerator;
 public class MpGenerator {
     //具体设置 https://blog.csdn.net/cx19910829/article/details/126889724
     public static void main(String[] args) {
-        FastAutoGenerator.create("jdbc:mysql://192.168.168.129:3316/tingshu_album?serverTimezone=GMT%2B8",
+        FastAutoGenerator.create("jdbc:mysql://192.168.168.131:3316/tingshu_album?serverTimezone=GMT%2B8",
                         "root",
                         "123")
                 .globalConfig(builder -> {
