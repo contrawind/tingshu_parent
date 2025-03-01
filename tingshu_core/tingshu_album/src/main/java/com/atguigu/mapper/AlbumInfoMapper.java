@@ -17,5 +17,5 @@ import org.apache.ibatis.annotations.Param;
  */
 public interface AlbumInfoMapper extends BaseMapper<AlbumInfo> {
 
-    IPage<AlbumTempVo> getUserAlbumByPage(@Param("pageParam") IPage<AlbumTempVo> pageParam, AlbumInfoQuery albumInfoQuery);
+    IPage<AlbumTempVo> getUserAlbumByPage(@Param("pageParam") IPage<AlbumTempVo> pageParam, @Param("albumInfoQuery") AlbumInfoQuery albumInfoQuery);
 }

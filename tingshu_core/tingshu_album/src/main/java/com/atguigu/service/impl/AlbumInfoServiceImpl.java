@@ -52,21 +52,24 @@ public class AlbumInfoServiceImpl extends ServiceImpl<AlbumInfoMapper, AlbumInfo
     private RedisTemplate redisTemplate;
 
     private AlbumInfo getAlbumInfoFromRedis(Long albumId) {
-        redisTemplate.setKeySerializer(new StringRedisSerializer());
-        GenericJackson2JsonRedisSerializer jackson2JsonRedisSerializer = new GenericJackson2JsonRedisSerializer();
-        redisTemplate.setValueSerializer(jackson2JsonRedisSerializer);
+        //redisTemplate.setKeySerializer(new StringRedisSerializer());
+        //GenericJackson2JsonRedisSerializer jackson2JsonRedisSerializer = new GenericJackson2JsonRedisSerializer();
+        // redisTemplate.setValueSerializer(jackson2JsonRedisSerializer);
         //定义key
         String cacheKey = RedisConstant.ALBUM_INFO_PREFIX + albumId;
         AlbumInfo albumInfoRedis = (AlbumInfo) redisTemplate.opsForValue().get(cacheKey);
         if (albumInfoRedis == null) {
+            //查询数据库
             AlbumInfo albumInfoDB = getAlbumInfoFromDB(albumId);
+            //将数据放入redis中
             redisTemplate.opsForValue().set(cacheKey, albumInfoDB);
             return albumInfoDB;
         }
         return albumInfoRedis;
     }
 
-    private @NotNull AlbumInfo getAlbumInfoFromDB(Long albumId) {
+    @NotNull
+    private AlbumInfo getAlbumInfoFromDB(Long albumId) {
         AlbumInfo albumInfo = getById(albumId);
         LambdaQueryWrapper<AlbumAttributeValue> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(AlbumAttributeValue::getAlbumId, albumId);

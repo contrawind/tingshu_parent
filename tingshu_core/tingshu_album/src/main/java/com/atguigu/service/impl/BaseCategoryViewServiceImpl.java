@@ -27,8 +27,6 @@ import java.util.stream.Collectors;
 @Slf4j
 public class BaseCategoryViewServiceImpl extends ServiceImpl<BaseCategoryViewMapper, BaseCategoryView> implements BaseCategoryViewService {
 
-    @Autowired
-    private BaseCategoryViewMapper baseCategoryViewMapper;
 
     //@Override
 //    public List<CategoryVo> getAllCategoryList1() {
@@ -74,9 +72,6 @@ public class BaseCategoryViewServiceImpl extends ServiceImpl<BaseCategoryViewMap
 
     @Override
     public List<CategoryVo> getAllCategoryList() {
-        log.info("开始查询所有分类信息");
-        List<CategoryVo> categoryList = baseCategoryViewMapper.getAllCategoryList();
-        log.info("查询到的分类信息: {}", categoryList);
-        return categoryList;
+        return baseMapper.getAllCategoryList();
     }
 }
