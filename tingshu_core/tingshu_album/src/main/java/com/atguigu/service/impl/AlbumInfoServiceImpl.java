@@ -1,6 +1,8 @@
 package com.atguigu.service.impl;
 
+import com.alibaba.cloud.commons.lang.StringUtils;
 import com.alibaba.nacos.client.naming.utils.CollectionUtils;
+import com.atguigu.cache.TingShuCache;
 import com.atguigu.constant.RedisConstant;
 import com.atguigu.constant.SystemConstant;
 import com.atguigu.entity.AlbumAttributeValue;
@@ -11,18 +13,26 @@ import com.atguigu.service.AlbumAttributeValueService;
 import com.atguigu.service.AlbumInfoService;
 import com.atguigu.service.AlbumStatService;
 import com.atguigu.util.AuthContextHolder;
+import com.atguigu.util.SleepUtils;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.jetbrains.annotations.NotNull;
+import org.redisson.api.RBloomFilter;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 /**
  * <p>
@@ -39,29 +49,102 @@ public class AlbumInfoServiceImpl extends ServiceImpl<AlbumInfoMapper, AlbumInfo
     @Autowired
     private AlbumStatService albumStatService;
 
+    @TingShuCache("albumInfo")
     @Override
     public AlbumInfo getAlbumInfoById(Long albumId) {
-        //根据主键id查询id信息
-        // AlbumInfo albumInfo = getAlbumInfoFromDB(albumId);
-        //融入redis
-        AlbumInfo albumInfo = getAlbumInfoFromRedis(albumId);
+        AlbumInfo albumInfo = getAlbumInfoFromDB(albumId);
+        //AlbumInfo albumInfo = getAlbumInfoFromRedis(albumId);
+        //AlbumInfo albumInfo = getAlbumInfoFromRedisWitThreadLocal(albumId);
+        //AlbumInfo albumInfo = getAlbumInfoFromRedisson(albumId);
         return albumInfo;
     }
+
+    @Autowired
+    private RedissonClient redissonClient;
+    @Autowired
+    private RBloomFilter bloomFilter;
+
+    private AlbumInfo getAlbumInfoFromRedisson(Long albumId) {
+
+
+        String cacheKey = RedisConstant.ALBUM_INFO_PREFIX + albumId;
+        AlbumInfo albumInfoRedis = (AlbumInfo) redisTemplate.opsForValue().get(cacheKey);
+        String lockKey = "lock" + albumId;
+        RLock lock = redissonClient.getLock(lockKey);
+        redissonClient.getLock(lockKey);
+        if (albumInfoRedis == null) {
+            lock.lock();//加锁
+
+            try {
+                boolean flag = bloomFilter.contains(albumId);
+                if (flag) {
+                    AlbumInfo albumInfoDB = getAlbumInfoFromDB(albumId);
+                    redisTemplate.opsForValue().set(cacheKey, albumInfoDB);
+                    return albumInfoDB;
+                }
+            } finally {
+                lock.unlock();//解锁
+            }
+        }
+        return albumInfoRedis;
+    }
+
+
+    ThreadLocal<String> threadLocal = new ThreadLocal<>();
+
+//    private AlbumInfo getAlbumInfoFromRedisWitThreadLocal(Long albumId) {
+//        String cacheKey = RedisConstant.ALBUM_INFO_PREFIX + albumId;
+//        AlbumInfo albumInfoRedis = (AlbumInfo) redisTemplate.opsForValue().get(cacheKey);
+//        //锁的粒度太大
+//        String lockKey = "lock-" + albumId;
+//        if (albumInfoRedis == null) {
+//            String token = threadLocal.get();
+//            boolean accquireLock = false;
+//            if (!StringUtils.isEmpty(token)) {
+//                accquireLock = true;
+//            } else {
+//                token = UUID.randomUUID().toString();
+//                accquireLock = redisTemplate.opsForValue().setIfAbsent(lockKey, token, 3, TimeUnit.SECONDS);
+//            }
+//            if (accquireLock) {
+//                AlbumInfo albumInfoDB = getAlbumInfoFromDB(albumId);
+//                redisTemplate.opsForValue().set(cacheKey, albumInfoDB);
+//                String luaScript = "if redis.call('get', KEYS[1]) == ARGV[1] then return redis.call('del', KEYS[1]) else return 0 end";
+//                DefaultRedisScript<Long> redisScript = new DefaultRedisScript<>();
+//                redisScript.setScriptText(luaScript);
+//                redisScript.setResultType(Long.class);
+//                redisTemplate.execute(redisScript, Arrays.asList(lockKey), token);
+//                //擦屁股
+//                threadLocal.remove();
+//                return albumInfoDB;
+//            } else {
+//                while (true) {
+//                    SleepUtils.millis(50);
+//                    boolean retryAccquireLock = redisTemplate.opsForValue().setIfAbsent(lockKey, token, 3, TimeUnit.SECONDS);
+//                    if (retryAccquireLock) {
+//                        threadLocal.set(token);
+//                        break;
+//                    }
+//                }
+//                return getAlbumInfoFromRedisWitThreadLocal(albumId);
+//            }
+//        }
+//        return albumInfoRedis;
+//
+//
+//    }
 
     @Autowired
     private RedisTemplate redisTemplate;
 
     private AlbumInfo getAlbumInfoFromRedis(Long albumId) {
-        //redisTemplate.setKeySerializer(new StringRedisSerializer());
-        //GenericJackson2JsonRedisSerializer jackson2JsonRedisSerializer = new GenericJackson2JsonRedisSerializer();
-        // redisTemplate.setValueSerializer(jackson2JsonRedisSerializer);
-        //定义key
+//        redisTemplate.setKeySerializer(new StringRedisSerializer());
+//        GenericJackson2JsonRedisSerializer jackson2JsonRedisSerializer = new GenericJackson2JsonRedisSerializer();
+//        redisTemplate.setValueSerializer(jackson2JsonRedisSerializer);
         String cacheKey = RedisConstant.ALBUM_INFO_PREFIX + albumId;
         AlbumInfo albumInfoRedis = (AlbumInfo) redisTemplate.opsForValue().get(cacheKey);
         if (albumInfoRedis == null) {
-            //查询数据库
             AlbumInfo albumInfoDB = getAlbumInfoFromDB(albumId);
-            //将数据放入redis中
             redisTemplate.opsForValue().set(cacheKey, albumInfoDB);
             return albumInfoDB;
         }
