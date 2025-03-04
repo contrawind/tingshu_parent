@@ -12,5 +12,7 @@ public @interface TingShuCache {
     //定义一个属性
     String value() default "cache";
 
+    boolean enableBloom() default true;
+
 }
 

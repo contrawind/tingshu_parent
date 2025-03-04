@@ -1,5 +1,6 @@
 package com.atguigu.service.impl;
 
+import com.atguigu.cache.TingShuCache;
 import com.atguigu.entity.BaseCategoryView;
 import com.atguigu.mapper.BaseCategoryViewMapper;
 import com.atguigu.service.BaseCategoryViewService;

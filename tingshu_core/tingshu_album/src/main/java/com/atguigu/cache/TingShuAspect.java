@@ -45,6 +45,7 @@ public class TingShuAspect {
         //6.判断缓存中是否有数据
         Object redisObject = redisTemplate.opsForValue().get(cacheKey);
         String lockKey = "lock-" + firstParam;
+        //双重检查
         //判断是否需要加锁--性能问题
         if (redisObject == null) {
             synchronized (lockKey.intern()) {

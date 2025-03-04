@@ -49,7 +49,7 @@ public class AlbumInfoServiceImpl extends ServiceImpl<AlbumInfoMapper, AlbumInfo
     @Autowired
     private AlbumStatService albumStatService;
 
-    @TingShuCache("albumInfo")
+    //@TingShuCache("albumInfo")
     @Override
     public AlbumInfo getAlbumInfoById(Long albumId) {
         AlbumInfo albumInfo = getAlbumInfoFromDB(albumId);
