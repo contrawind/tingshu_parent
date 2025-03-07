@@ -11,24 +11,29 @@ import co.elastic.clients.elasticsearch._types.query_dsl.TermsQueryField;
 import co.elastic.clients.elasticsearch.core.SearchRequest;
 import co.elastic.clients.elasticsearch.core.SearchResponse;
 import co.elastic.clients.elasticsearch.core.search.Hit;
-import com.alibaba.cloud.commons.lang.StringUtils;
+import co.elastic.clients.elasticsearch.core.search.Suggester;
+import co.elastic.clients.elasticsearch.core.search.Suggestion;
 import com.alibaba.fastjson.JSONObject;
 import com.atguigu.AlbumFeignClient;
 import com.atguigu.CategoryFeignClient;
-import com.atguigu.SearchFeignClient;
 import com.atguigu.UserFeignClient;
 import com.atguigu.entity.*;
 import com.atguigu.query.AlbumIndexQuery;
 import com.atguigu.repository.AlbumRepository;
+import com.atguigu.repository.SuggestRepository;
 import com.atguigu.service.SearchService;
+import com.atguigu.util.PinYinUtils;
 import com.atguigu.vo.AlbumInfoIndexVo;
 import com.atguigu.vo.AlbumSearchResponseVo;
+import com.atguigu.vo.AlbumStatVo;
 import com.atguigu.vo.UserInfoVo;
 import lombok.SneakyThrows;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.elasticsearch.core.suggest.Completion;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -38,26 +43,23 @@ public class SearchServiceImpl implements SearchService {
     @Autowired
     private AlbumRepository albumRepository;
     @Autowired
-    private AlbumFeignClient albumFeignClient;
+    private SuggestRepository suggestRepository;
     @Autowired
-    private SearchFeignClient searchFeignClient;
+    private AlbumFeignClient albumFeignClient;
     @Autowired
     private CategoryFeignClient categoryFeignClient;
     @Autowired
     private UserFeignClient userFeignClient;
-    @Autowired
-    private ElasticsearchClient elasticsearchClient;
 
     @Override
     public void onSaleAlbum(Long albumId) {
         AlbumInfoIndex albumInfoIndex = new AlbumInfoIndex();
-        //根据albumId查询albumInfo信息 已写过，调用feign todo 判断albumInfo是否为空
+        //根据albumId查询albumInfo信息 已写
         AlbumInfo albumInfo = albumFeignClient.getAlbumInfoById(albumId).getData();
-        //对拷属性
         BeanUtils.copyProperties(albumInfo, albumInfoIndex);
-        //根据albumId查询专辑属性值
+        //根据albumId查询专辑属性值 未写
         List<AlbumAttributeValue> albumPropertyValueList = albumFeignClient.getAlbumPropertyValue(albumId);
-        if (!CollectionUtils.isEmpty(albumPropertyValueList)) {//专辑属性值不为空
+        if (!CollectionUtils.isEmpty(albumPropertyValueList)) {
             List<AttributeValueIndex> valueIndexList = albumPropertyValueList.stream().map(albumPropertyValue -> {
                 AttributeValueIndex attributeValueIndex = new AttributeValueIndex();
                 BeanUtils.copyProperties(albumPropertyValue, attributeValueIndex);
@@ -65,7 +67,7 @@ public class SearchServiceImpl implements SearchService {
             }).collect(Collectors.toList());
             albumInfoIndex.setAttributeValueIndexList(valueIndexList);
         }
-        //根据三级分类id查询专辑的分类信息  todo 判断albumInfo是否为空
+        //根据三级分类id查询专辑的分类信息 未写
         BaseCategoryView categoryView = categoryFeignClient.getCategoryView(albumInfo.getCategory3Id());
         albumInfoIndex.setCategory1Id(categoryView.getCategory1Id());
         albumInfoIndex.setCategory2Id(categoryView.getCategory2Id());
@@ -85,6 +87,24 @@ public class SearchServiceImpl implements SearchService {
         double hotScore = num1 * 0.2 + num2 * 0.3 + num3 * 0.4 + num4 * 0.1;
         albumInfoIndex.setHotScore(hotScore);
         albumRepository.save(albumInfoIndex);
+        //专辑自动补全的内容
+        SuggestIndex suggestIndex = new SuggestIndex();
+        suggestIndex.setId(UUID.randomUUID().toString().replaceAll("-",""));
+        suggestIndex.setTitle(albumInfo.getAlbumTitle());
+        suggestIndex.setKeyword(new Completion(new String[]{albumInfo.getAlbumTitle()}));
+        suggestIndex.setKeywordPinyin(new Completion(new String[]{PinYinUtils.toHanyuPinyin(albumInfo.getAlbumTitle())}));
+        suggestIndex.setKeywordSequence(new Completion(new String[]{PinYinUtils.getFirstLetter(albumInfo.getAlbumTitle())}));
+        suggestRepository.save(suggestIndex);
+        //专辑主播名称自动补全
+        if(!StringUtils.isEmpty(albumInfoIndex.getAnnouncerName())){
+            SuggestIndex announcerSuggestIndex = new SuggestIndex();
+            announcerSuggestIndex.setId(UUID.randomUUID().toString().replaceAll("-",""));
+            announcerSuggestIndex.setTitle(albumInfoIndex.getAnnouncerName());
+            announcerSuggestIndex.setKeyword(new Completion(new String[]{albumInfoIndex.getAnnouncerName()}));
+            announcerSuggestIndex.setKeywordPinyin(new Completion(new String[]{PinYinUtils.toHanyuPinyin(albumInfoIndex.getAnnouncerName())}));
+            announcerSuggestIndex.setKeywordSequence(new Completion(new String[]{PinYinUtils.getFirstLetter(albumInfoIndex.getAnnouncerName())}));
+            suggestRepository.save(announcerSuggestIndex);
+        }
     }
 
     @Override
@@ -92,6 +112,8 @@ public class SearchServiceImpl implements SearchService {
         albumRepository.deleteById(albumId);
     }
 
+    @Autowired
+    private ElasticsearchClient elasticsearchClient;
 
     @SneakyThrows
     @Override
@@ -144,12 +166,81 @@ public class SearchServiceImpl implements SearchService {
         //3.对结果进行解析
         AlbumSearchResponseVo responseVo = parseSearchResult(response);
         //4.设置其他参数
-        responseVo.setPageNo(albumIndexQuery.getPageNo());//传给前端
+        responseVo.setPageNo(albumIndexQuery.getPageNo());
         responseVo.setPageSize(albumIndexQuery.getPageSize());
         //5.设置总页数
         long totalPages = (responseVo.getTotal() + responseVo.getPageSize() - 1) / responseVo.getPageSize();
         responseVo.setTotalPages(totalPages);
         return responseVo;
+    }
+
+    @SneakyThrows
+    @Override
+    public HashSet<String> autoCompleteSuggest(String keyword) {
+        Suggester suggester=new Suggester.Builder()
+                .suggesters("suggestionKeyword",s->s
+                        .prefix(keyword)
+                        .completion(c->c.field("keyword")))
+                .suggesters("suggestionKeywordPinyin",s->s
+                        .prefix(keyword)
+                        .completion(c->c.field("keywordPinyin")))
+                .suggesters("suggestionKeywordSequence",s->s
+                        .prefix(keyword)
+                        .completion(c->c.field("keywordSequence"))).build();
+        System.out.println(suggester.toString());
+        SearchResponse<SuggestIndex> suggestResponse = elasticsearchClient.search(s -> s
+                .index("suggestinfo")
+                .suggest(suggester), SuggestIndex.class);
+        //2.解析自动补全结果
+        HashSet<String> suggestSet = analysisResponse(suggestResponse);
+        //3.如果上面自动补全的比较少
+        if(suggestSet.size()<5){
+            SearchResponse<SuggestIndex> searchResponse = elasticsearchClient.search(s -> s.index("suggestinfo")
+                            .size(10)
+                            .query(q -> q.match(m -> m.field("title").query(keyword)))
+                    , SuggestIndex.class);
+            List<Hit<SuggestIndex>> suggestHitList = searchResponse.hits().hits();
+            for (Hit<SuggestIndex> suggestHit : suggestHitList) {
+                suggestSet.add(suggestHit.source().getTitle());
+                int size = suggestSet.size();
+                //自动补全不要超过10个
+                if(size>10) break;
+            }
+        }
+        return suggestSet;
+    }
+
+    @Override
+    public Map<String, Object> getAlbumDetail(Long albumId) {
+        Map<String, Object> retMap = new HashMap<>();
+        //a.专辑基本信息 已写
+        AlbumInfo albumInfo = albumFeignClient.getAlbumInfoById(albumId).getData();
+        retMap.put("albumInfo",albumInfo);
+        //b.专辑统计信息 未写
+        AlbumStatVo albumStatInfo = albumFeignClient.getAlbumStatInfo(albumId);
+        retMap.put("albumStatVo",albumStatInfo);
+        //c.专辑分类信息 已写
+        BaseCategoryView categoryView = categoryFeignClient.getCategoryView(albumInfo.getCategory3Id());
+        retMap.put("baseCategoryView",categoryView);
+        //d.用户基本信息 已写
+        UserInfoVo userInfoVo = userFeignClient.getUserById(albumInfo.getUserId()).getData();
+        retMap.put("announcer",userInfoVo);
+        return retMap;
+    }
+
+    private HashSet<String> analysisResponse(SearchResponse<SuggestIndex> suggestResponse) {
+        HashSet<String> suggestSet = new HashSet<>();
+        Map<String, List<Suggestion<SuggestIndex>>> suggestMap = suggestResponse.suggest();
+        suggestMap.entrySet().stream().forEach(suggestEntry->{
+            List<Suggestion<SuggestIndex>> suggestValueList = suggestEntry.getValue();
+            suggestValueList.stream().forEach(suggestValue->{
+                List<String> suggestTitleList = suggestValue.completion().options().stream()
+                        .map(m -> m.source().getTitle()).collect(Collectors.toList());
+                suggestSet.addAll(suggestTitleList);
+            });
+        });
+        return suggestSet;
+
     }
 
     private AlbumSearchResponseVo parseSearchResult(SearchResponse<AlbumInfoIndex> response) {
@@ -164,7 +255,7 @@ public class SearchServiceImpl implements SearchService {
             BeanUtils.copyProperties(searchAlbumInfoHit.source(), albumInfoIndexVo);
             //设置高亮
             List<String> albumTitleHightList = searchAlbumInfoHit.highlight().get("albumTitle");
-            if (albumTitleHightList != null) {//如果存在高亮
+            if (albumTitleHightList != null) {
                 albumInfoIndexVo.setAlbumTitle(albumTitleHightList.get(0));
             }
             albumInfoIndexVoList.add(albumInfoIndexVo);
@@ -255,4 +346,3 @@ public class SearchServiceImpl implements SearchService {
         return request;
     }
 }
-

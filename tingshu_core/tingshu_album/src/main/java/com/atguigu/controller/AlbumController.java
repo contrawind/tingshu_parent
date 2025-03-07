@@ -127,4 +127,5 @@ public class AlbumController {
         List<AlbumAttributeValue> attributeValueList = albumPropertyValueService.list(wrapper);
         return attributeValueList;
     }
+
 }

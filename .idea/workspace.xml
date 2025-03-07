@@ -5,8 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ae9db2f1-8fa3-44e7-890c-c71b2c51685b" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/tingshu_core/tingshu_search/src/main/java/com/atguigu/repository/SuggestRepository.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tingshu_core/tingshu_search/src/main/java/com/atguigu/controller/SearchController.java" beforeDir="false" afterPath="$PROJECT_DIR$/tingshu_core/tingshu_search/src/main/java/com/atguigu/controller/SearchController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tingshu_core/tingshu_search/src/main/java/com/atguigu/service/SearchService.java" beforeDir="false" afterPath="$PROJECT_DIR$/tingshu_core/tingshu_search/src/main/java/com/atguigu/service/SearchService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tingshu_core/tingshu_search/src/main/java/com/atguigu/service/impl/SearchServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/tingshu_core/tingshu_search/src/main/java/com/atguigu/service/impl/SearchServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tingshu_feign_client/src/main/java/com/atguigu/AlbumFeignClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/tingshu_feign_client/src/main/java/com/atguigu/AlbumFeignClient.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -102,6 +106,11 @@
   <component name="ReactorSettings">
     <option name="notificationShown" value="true" />
   </component>
+  <component name="RecentsManager">
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="com.atguigu.repository" />
+    </key>
+  </component>
   <component name="RunDashboard">
     <option name="configurationTypes">
       <set>
@@ -172,10 +181,10 @@
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Spring Boot.GatewayApplication" />
         <item itemvalue="Spring Boot.SearchApplication" />
         <item itemvalue="Spring Boot.UserApplication" />
         <item itemvalue="Spring Boot.AlbumApplication" />
-        <item itemvalue="Spring Boot.GatewayApplication" />
       </list>
     </recent_temporary>
   </component>
@@ -196,7 +205,7 @@
       <option name="presentableId" value="Default" />
       <updated>1724209766694</updated>
       <workItem from="1741162421755" duration="279000" />
-      <workItem from="1741162727446" duration="25406000" />
+      <workItem from="1741162727446" duration="28820000" />
     </task>
     <servers />
   </component>
@@ -226,24 +235,33 @@
           </properties>
           <option name="timeStamp" value="3" />
         </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/tingshu_core/tingshu_search/src/main/java/com/atguigu/service/impl/SearchServiceImpl.java</url>
+          <line>160</line>
+          <properties class="com.atguigu.service.impl.SearchServiceImpl" method="search">
+            <option name="EMULATED" value="true" />
+            <option name="WATCH_EXIT" value="false" />
+          </properties>
+          <option name="timeStamp" value="12" />
+        </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/tingshu_core/tingshu_search/src/main/java/com/atguigu/service/impl/SearchServiceImpl.java</url>
-          <line>179</line>
+          <line>270</line>
           <option name="timeStamp" value="7" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/tingshu_core/tingshu_search/src/main/java/com/atguigu/service/impl/SearchServiceImpl.java</url>
-          <line>140</line>
+          <line>162</line>
           <option name="timeStamp" value="8" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/tingshu_core/tingshu_search/src/main/java/com/atguigu/service/impl/SearchServiceImpl.java</url>
-          <line>177</line>
+          <line>268</line>
           <option name="timeStamp" value="10" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/tingshu_core/tingshu_search/src/main/java/com/atguigu/service/impl/SearchServiceImpl.java</url>
-          <line>178</line>
+          <line>269</line>
           <option name="timeStamp" value="11" />
         </line-breakpoint>
       </breakpoints>
