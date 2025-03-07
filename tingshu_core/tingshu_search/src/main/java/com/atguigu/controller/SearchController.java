@@ -51,7 +51,7 @@ public class SearchController {
     //http://127.0.0.1/api/search/albumInfo
     @Operation(summary = "专辑搜索")
     @PostMapping
-    public RetVal search(AlbumIndexQuery albumIndexQuery) {
+    public RetVal search(@RequestBody AlbumIndexQuery albumIndexQuery) {
         AlbumSearchResponseVo searchResponseVo = searchService.search(albumIndexQuery);
         return RetVal.ok(searchResponseVo);
     }
