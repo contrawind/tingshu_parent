@@ -38,6 +38,7 @@ import org.springframework.util.StringUtils;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -214,6 +215,9 @@ public class SearchServiceImpl implements SearchService {
         return suggestSet;
     }
 
+    @Autowired
+    private ThreadPoolExecutor myPoolExecutor;
+
     @Override
     public Map<String, Object> getAlbumDetail(Long albumId) {
         Map<String, Object> retMap = new HashMap<>();
@@ -222,23 +226,23 @@ public class SearchServiceImpl implements SearchService {
             AlbumInfo albumInfo = albumFeignClient.getAlbumInfoById(albumId).getData();
             retMap.put("albumInfo", albumInfo);
             return albumInfo;
-        });
+        }, myPoolExecutor);
         CompletableFuture<Void> statFuture = CompletableFuture.runAsync(() -> {
             //b.专辑统计信息 未写
             AlbumStatVo albumStatInfo = albumFeignClient.getAlbumStatInfo(albumId);
             retMap.put("albumStatVo", albumStatInfo);
-        });
+        }, myPoolExecutor);
         CompletableFuture<Void> categoryViewFuture = albumFuture.thenAcceptAsync(albumInfo -> {
             //c.专辑分类信息 已写
             BaseCategoryView categoryView = categoryFeignClient.getCategoryView(albumInfo.getCategory3Id());
             retMap.put("baseCategoryView", categoryView);
-        });
+        }, myPoolExecutor);
         CompletableFuture<Void> announcerFuture = albumFuture.thenAcceptAsync(albumInfo -> {
             //d.用户基本信息 已写
             UserInfoVo userInfoVo = userFeignClient.getUserById(albumInfo.getUserId()).getData();
             retMap.put("announcer", userInfoVo);
 
-        });
+        }, myPoolExecutor);
         //等待所有任务完成，再去执行return
         CompletableFuture.allOf(albumFuture, statFuture, categoryViewFuture, announcerFuture).join();
 

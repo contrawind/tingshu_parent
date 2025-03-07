@@ -5,6 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ae9db2f1-8fa3-44e7-890c-c71b2c51685b" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/tingshu_common/tingshu_core_utils/src/main/java/com/atguigu/threadpool/MyThreadPool.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tingshu_common/tingshu_core_utils/src/main/java/com/atguigu/threadpool/MyThreadProperties.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tingshu_core/tingshu_search/src/main/java/com/atguigu/service/impl/SearchServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/tingshu_core/tingshu_search/src/main/java/com/atguigu/service/impl/SearchServiceImpl.java" afterDir="false" />
     </list>
@@ -116,8 +118,15 @@
       </set>
     </option>
   </component>
-  <component name="RunManager" selected="Spring Boot.SearchApplication">
-    <configuration name="AlbumApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" temporary="true" nameIsGenerated="true">
+  <component name="RunManager" selected="Compound.start">
+    <configuration name="start" type="CompoundRunConfigurationType">
+      <toRun name="AlbumApplication" type="SpringBootApplicationConfigurationType" />
+      <toRun name="GatewayApplication" type="SpringBootApplicationConfigurationType" />
+      <toRun name="SearchApplication" type="SpringBootApplicationConfigurationType" />
+      <toRun name="UserApplication" type="SpringBootApplicationConfigurationType" />
+      <method v="2" />
+    </configuration>
+    <configuration name="AlbumApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
       <module name="tingshu_album" />
       <option name="SPRING_BOOT_MAIN_CLASS" value="com.atguigu.AlbumApplication" />
       <extension name="coverage">
@@ -130,7 +139,7 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="GatewayApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" temporary="true" nameIsGenerated="true">
+    <configuration name="GatewayApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
       <module name="tingshu_gateway" />
       <option name="SPRING_BOOT_MAIN_CLASS" value="com.atguigu.GatewayApplication" />
       <extension name="coverage">
@@ -143,7 +152,7 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="SearchApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" temporary="true" nameIsGenerated="true">
+    <configuration name="SearchApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
       <module name="tingshu_search" />
       <option name="SPRING_BOOT_MAIN_CLASS" value="com.atguigu.SearchApplication" />
       <extension name="coverage">
@@ -156,7 +165,7 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="UserApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" temporary="true" nameIsGenerated="true">
+    <configuration name="UserApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
       <module name="tingshu_user" />
       <option name="SPRING_BOOT_MAIN_CLASS" value="com.atguigu.UserApplication" />
       <extension name="coverage">
@@ -170,19 +179,12 @@
       </method>
     </configuration>
     <list>
+      <item itemvalue="Compound.start" />
       <item itemvalue="Spring Boot.AlbumApplication" />
       <item itemvalue="Spring Boot.GatewayApplication" />
       <item itemvalue="Spring Boot.SearchApplication" />
       <item itemvalue="Spring Boot.UserApplication" />
     </list>
-    <recent_temporary>
-      <list>
-        <item itemvalue="Spring Boot.SearchApplication" />
-        <item itemvalue="Spring Boot.UserApplication" />
-        <item itemvalue="Spring Boot.GatewayApplication" />
-        <item itemvalue="Spring Boot.AlbumApplication" />
-      </list>
-    </recent_temporary>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
@@ -201,7 +203,7 @@
       <option name="presentableId" value="Default" />
       <updated>1724209766694</updated>
       <workItem from="1741162421755" duration="279000" />
-      <workItem from="1741162727446" duration="35080000" />
+      <workItem from="1741162727446" duration="37581000" />
     </task>
     <servers />
   </component>
@@ -233,27 +235,27 @@
         </line-breakpoint>
         <line-breakpoint type="java-line">
           <url>file://$PROJECT_DIR$/tingshu_core/tingshu_search/src/main/java/com/atguigu/service/impl/SearchServiceImpl.java</url>
-          <line>183</line>
+          <line>184</line>
           <option name="timeStamp" value="15" />
         </line-breakpoint>
         <line-breakpoint type="java-line">
           <url>file://$PROJECT_DIR$/tingshu_core/tingshu_search/src/main/java/com/atguigu/service/impl/SearchServiceImpl.java</url>
-          <line>94</line>
+          <line>95</line>
           <option name="timeStamp" value="16" />
         </line-breakpoint>
         <line-breakpoint type="java-line">
           <url>file://$PROJECT_DIR$/tingshu_core/tingshu_search/src/main/java/com/atguigu/service/impl/SearchServiceImpl.java</url>
-          <line>102</line>
+          <line>103</line>
           <option name="timeStamp" value="17" />
         </line-breakpoint>
         <line-breakpoint type="java-line">
           <url>file://$PROJECT_DIR$/tingshu_core/tingshu_search/src/main/java/com/atguigu/service/impl/SearchServiceImpl.java</url>
-          <line>273</line>
+          <line>278</line>
           <option name="timeStamp" value="18" />
         </line-breakpoint>
         <line-breakpoint type="java-line">
           <url>file://$PROJECT_DIR$/tingshu_core/tingshu_search/src/main/java/com/atguigu/service/impl/SearchServiceImpl.java</url>
-          <line>283</line>
+          <line>288</line>
           <option name="timeStamp" value="19" />
         </line-breakpoint>
       </breakpoints>
