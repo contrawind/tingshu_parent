@@ -14,7 +14,6 @@
     <packaging>pom</packaging>
     <modules>
         <module>tingshu_common_log</module>
-        <module>tingshu_common_log</module>
         <module>tingshu_common_utils</module>
         <module>tingshu_core_utils</module>
         <module>tingshu_kafka_utils</module>

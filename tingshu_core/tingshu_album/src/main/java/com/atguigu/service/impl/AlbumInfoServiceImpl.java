@@ -2,7 +2,9 @@ package com.atguigu.service.impl;
 
 import com.alibaba.cloud.commons.lang.StringUtils;
 import com.alibaba.nacos.client.naming.utils.CollectionUtils;
+import com.atguigu.SearchFeignClient;
 import com.atguigu.cache.TingShuCache;
+import com.atguigu.constant.KafkaConstant;
 import com.atguigu.constant.RedisConstant;
 import com.atguigu.constant.SystemConstant;
 import com.atguigu.entity.AlbumAttributeValue;
@@ -12,6 +14,7 @@ import com.atguigu.mapper.AlbumInfoMapper;
 import com.atguigu.service.AlbumAttributeValueService;
 import com.atguigu.service.AlbumInfoService;
 import com.atguigu.service.AlbumStatService;
+import com.atguigu.service.KafkaService;
 import com.atguigu.util.AuthContextHolder;
 import com.atguigu.util.SleepUtils;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -41,15 +44,53 @@ import java.util.concurrent.TimeUnit;
  *
  * @author 林长启
  * @since 2025-02-19
- */
-@Service
+ */@Service
 public class AlbumInfoServiceImpl extends ServiceImpl<AlbumInfoMapper, AlbumInfo> implements AlbumInfoService {
     @Autowired
     private AlbumAttributeValueService albumAttributeValueService;
     @Autowired
     private AlbumStatService albumStatService;
+    @Autowired
+    private SearchFeignClient searchFeignClient;
+    @Autowired
+    private KafkaService kafkaService;
+    //面试题 什么是事务
+    @Transactional
+    @Override
+    public void saveAlbumInfo(AlbumInfo albumInfo) {
+        Long userId = AuthContextHolder.getUserId();
+        albumInfo.setUserId(userId);
+        albumInfo.setStatus(SystemConstant.ALBUM_APPROVED);
+        //付费专辑前5集免费
+        if (!SystemConstant.FREE_ALBUM.equals(albumInfo.getPayType())) {
+            albumInfo.setTracksForFree(5);
+        }
+        save(albumInfo);
+        //保存专辑标签属性
+        List<AlbumAttributeValue> albumPropertyValueList = albumInfo.getAlbumPropertyValueList();
+        if (!CollectionUtils.isEmpty(albumPropertyValueList)) {
+            for (AlbumAttributeValue albumAttributeValue : albumPropertyValueList) {
+                //设置专辑id 是否能拿到id？
+                albumAttributeValue.setAlbumId(albumInfo.getId());
+                //albumAttributeValueService.save(albumAttributeValue);
+            }
+            albumAttributeValueService.saveBatch(albumPropertyValueList);
+        }
+        //保存专辑的统计信息
+        List<AlbumStat> albumStatList = buildAlbumStatData(albumInfo.getId());
+        albumStatService.saveBatch(albumStatList);
+        //TODO 后面再说
+        //如果公开专辑 把专辑信息添加到ES中
+        if(SystemConstant.OPEN_ALBUM.equals(albumInfo.getIsOpen())){
+            //searchFeignClient.onSaleAlbum(albumInfo.getId());
+            kafkaService.sendMessage(KafkaConstant.ONSALE_ALBUM_QUEUE,String.valueOf(albumInfo.getId()));
+        }
+        //把新增专辑放到布隆过滤器里面
+//      RBloomFilter<Object> bloomFilter = redissonClient.getBloomFilter(RedisConstant.ALBUM_BLOOM_FILTER);
+//      bloomFilter.add(albumInfo.getId());
+    }
 
-    //@TingShuCache("albumInfo")
+    @TingShuCache("albumInfo")
     @Override
     public AlbumInfo getAlbumInfoById(Long albumId) {
         AlbumInfo albumInfo = getAlbumInfoFromDB(albumId);
@@ -65,16 +106,12 @@ public class AlbumInfoServiceImpl extends ServiceImpl<AlbumInfoMapper, AlbumInfo
     private RBloomFilter bloomFilter;
 
     private AlbumInfo getAlbumInfoFromRedisson(Long albumId) {
-
-
         String cacheKey = RedisConstant.ALBUM_INFO_PREFIX + albumId;
         AlbumInfo albumInfoRedis = (AlbumInfo) redisTemplate.opsForValue().get(cacheKey);
-        String lockKey = "lock" + albumId;
+        String lockKey = "lock-" + albumId;
         RLock lock = redissonClient.getLock(lockKey);
-        redissonClient.getLock(lockKey);
         if (albumInfoRedis == null) {
-            lock.lock();//加锁
-
+            lock.lock();
             try {
                 boolean flag = bloomFilter.contains(albumId);
                 if (flag) {
@@ -83,7 +120,7 @@ public class AlbumInfoServiceImpl extends ServiceImpl<AlbumInfoMapper, AlbumInfo
                     return albumInfoDB;
                 }
             } finally {
-                lock.unlock();//解锁
+                lock.unlock();
             }
         }
         return albumInfoRedis;
@@ -91,48 +128,47 @@ public class AlbumInfoServiceImpl extends ServiceImpl<AlbumInfoMapper, AlbumInfo
 
 
     ThreadLocal<String> threadLocal = new ThreadLocal<>();
+    private AlbumInfo getAlbumInfoFromRedisWitThreadLocal(Long albumId) {
+        String cacheKey = RedisConstant.ALBUM_INFO_PREFIX + albumId;
+        AlbumInfo albumInfoRedis = (AlbumInfo) redisTemplate.opsForValue().get(cacheKey);
+        //锁的粒度太大
+        String lockKey = "lock-" + albumId;
+        if (albumInfoRedis == null) {
+            String token = threadLocal.get();
+            boolean accquireLock = false;
+            if (!StringUtils.isEmpty(token)) {
+                accquireLock = true;
+            } else {
+                token = UUID.randomUUID().toString();
+                accquireLock = redisTemplate.opsForValue().setIfAbsent(lockKey, token, 3, TimeUnit.SECONDS);
+            }
+            if (accquireLock) {
+                AlbumInfo albumInfoDB = getAlbumInfoFromDB(albumId);
+                redisTemplate.opsForValue().set(cacheKey, albumInfoDB);
+                String luaScript = "if redis.call('get', KEYS[1]) == ARGV[1] then return redis.call('del', KEYS[1]) else return 0 end";
+                DefaultRedisScript<Long> redisScript = new DefaultRedisScript<>();
+                redisScript.setScriptText(luaScript);
+                redisScript.setResultType(Long.class);
+                redisTemplate.execute(redisScript, Arrays.asList(lockKey), token);
+                //擦屁股
+                threadLocal.remove();
+                return albumInfoDB;
+            } else {
+                while (true) {
+                    SleepUtils.millis(50);
+                    boolean retryAccquireLock = redisTemplate.opsForValue().setIfAbsent(lockKey, token, 3, TimeUnit.SECONDS);
+                    if (retryAccquireLock) {
+                        threadLocal.set(token);
+                        break;
+                    }
+                }
+                return getAlbumInfoFromRedisWitThreadLocal(albumId);
+            }
+        }
+        return albumInfoRedis;
 
-//    private AlbumInfo getAlbumInfoFromRedisWitThreadLocal(Long albumId) {
-//        String cacheKey = RedisConstant.ALBUM_INFO_PREFIX + albumId;
-//        AlbumInfo albumInfoRedis = (AlbumInfo) redisTemplate.opsForValue().get(cacheKey);
-//        //锁的粒度太大
-//        String lockKey = "lock-" + albumId;
-//        if (albumInfoRedis == null) {
-//            String token = threadLocal.get();
-//            boolean accquireLock = false;
-//            if (!StringUtils.isEmpty(token)) {
-//                accquireLock = true;
-//            } else {
-//                token = UUID.randomUUID().toString();
-//                accquireLock = redisTemplate.opsForValue().setIfAbsent(lockKey, token, 3, TimeUnit.SECONDS);
-//            }
-//            if (accquireLock) {
-//                AlbumInfo albumInfoDB = getAlbumInfoFromDB(albumId);
-//                redisTemplate.opsForValue().set(cacheKey, albumInfoDB);
-//                String luaScript = "if redis.call('get', KEYS[1]) == ARGV[1] then return redis.call('del', KEYS[1]) else return 0 end";
-//                DefaultRedisScript<Long> redisScript = new DefaultRedisScript<>();
-//                redisScript.setScriptText(luaScript);
-//                redisScript.setResultType(Long.class);
-//                redisTemplate.execute(redisScript, Arrays.asList(lockKey), token);
-//                //擦屁股
-//                threadLocal.remove();
-//                return albumInfoDB;
-//            } else {
-//                while (true) {
-//                    SleepUtils.millis(50);
-//                    boolean retryAccquireLock = redisTemplate.opsForValue().setIfAbsent(lockKey, token, 3, TimeUnit.SECONDS);
-//                    if (retryAccquireLock) {
-//                        threadLocal.set(token);
-//                        break;
-//                    }
-//                }
-//                return getAlbumInfoFromRedisWitThreadLocal(albumId);
-//            }
-//        }
-//        return albumInfoRedis;
-//
-//
-//    }
+
+    }
 
     @Autowired
     private RedisTemplate redisTemplate;
@@ -178,58 +214,31 @@ public class AlbumInfoServiceImpl extends ServiceImpl<AlbumInfoMapper, AlbumInfo
             }
             albumAttributeValueService.saveBatch(albumPropertyValueList);
         }
-        //TODO
+        //TODO 还有其他事情要做 修改缓存里面的信息-作业
+        //如果公开专辑 把专辑信息添加到ES中
+        if(SystemConstant.OPEN_ALBUM.equals(albumInfo.getIsOpen())){
+            //searchFeignClient.onSaleAlbum(albumInfo.getId());
+            kafkaService.sendMessage(KafkaConstant.ONSALE_ALBUM_QUEUE,String.valueOf(albumInfo.getId()));
+        }else{
+            //searchFeignClient.offSaleAlbum(albumInfo.getId());
+            kafkaService.sendMessage(KafkaConstant.OFFSALE_ALBUM_QUEUE,String.valueOf(albumInfo.getId()));
+        }
     }
-
 
     @Override
     public void deleteAlbumInfo(Long albumId) {
-        //删除专辑基本信息
         removeById(albumId);
-        //删除专辑标签属性信息
         LambdaQueryWrapper<AlbumAttributeValue> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(AlbumAttributeValue::getAlbumId, albumId);
         albumAttributeValueService.remove(wrapper);
-        //删除专辑统计信息
         albumStatService.remove(new LambdaQueryWrapper<AlbumStat>().eq(AlbumStat::getAlbumId, albumId));
-        //TODO
+        //TODO 还有其他事情要做
+        //searchFeignClient.offSaleAlbum(albumId);
+        kafkaService.sendMessage(KafkaConstant.OFFSALE_ALBUM_QUEUE,String.valueOf(albumId));
     }
 
-    @Transactional//写入要么全部成功，要么全部回滚，避免因部分失败导致脏数据或逻辑错误
-    @Override
-    public void saveAlbumInfo(AlbumInfo albumInfo) {
-        Long userId = AuthContextHolder.getUserId();
-        albumInfo.setUserId(userId);
-        //默认审核通过
-        albumInfo.setStatus(SystemConstant.ALBUM_APPROVED);
-        //付费专辑前5集免费
-        //判断专辑是否付费
-        if (!SystemConstant.FREE_ALBUM.equals(albumInfo.getPayType())) {//收费
-
-            albumInfo.setTracksForFree(5);
-        }
-        //保存专辑的基本信息
-        save(albumInfo);
-        //保存专辑标签属性
-        List<AlbumAttributeValue> albumPropertyValueList = albumInfo.getAlbumPropertyValueList();
-        if (!CollectionUtils.isEmpty(albumPropertyValueList)) {
-            for (AlbumAttributeValue albumAttributeValue : albumPropertyValueList) {
-                //设置专辑id
-                albumAttributeValue.setAlbumId(albumInfo.getId());
-                //albumAttributeValueService.save(albumAttributeValue);
-            }
-            albumAttributeValueService.saveBatch(albumPropertyValueList);
-        }
-        //保存专辑的统计信息
-        List<AlbumStat> albumStatList = buildAlbumStatData(albumInfo.getId());
-        albumStatService.saveBatch(albumStatList);
-        //todo
-    }
-
-    //初始化专辑统计信息
     private List<AlbumStat> buildAlbumStatData(Long albumId) {
         ArrayList<AlbumStat> albumStatList = new ArrayList<>();
-        //初始化专辑统计信息
         initAlbumStat(albumId, albumStatList, SystemConstant.PLAY_NUM_ALBUM);
         initAlbumStat(albumId, albumStatList, SystemConstant.SUBSCRIBE_NUM_ALBUM);
         initAlbumStat(albumId, albumStatList, SystemConstant.BUY_NUM_ALBUM);

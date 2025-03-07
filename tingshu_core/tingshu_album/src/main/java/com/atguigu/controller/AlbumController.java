@@ -1,14 +1,17 @@
 package com.atguigu.controller;
 
 
+import com.atguigu.entity.AlbumAttributeValue;
 import com.atguigu.entity.AlbumInfo;
 import com.atguigu.login.TingShuLogin;
 import com.atguigu.mapper.AlbumInfoMapper;
 import com.atguigu.query.AlbumInfoQuery;
 import com.atguigu.result.RetVal;
+import com.atguigu.service.AlbumAttributeValueService;
 import com.atguigu.service.AlbumInfoService;
 import com.atguigu.util.AuthContextHolder;
 import com.atguigu.vo.AlbumTempVo;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.v3.oas.annotations.Operation;
@@ -87,7 +90,7 @@ public class AlbumController {
 
     @Operation(summary = "根据id查询专辑信息")
     @GetMapping("getAlbumInfoById/{albumId}")
-    public RetVal getAlbumInfoById(@PathVariable Long albumId) {
+    public RetVal<AlbumInfo> getAlbumInfoById(@PathVariable Long albumId) {
         AlbumInfo albumInfo = albumInfoService.getAlbumInfoById(albumId);
         return RetVal.ok(albumInfo);
     }
@@ -105,5 +108,23 @@ public class AlbumController {
     public RetVal deleteAlbumInfo(@PathVariable Long albumId) {
         albumInfoService.deleteAlbumInfo(albumId);
         return RetVal.ok();
+    }
+
+    /**
+     * 搜索模块
+     *
+     * @param albumId
+     * @return
+     */
+    @Autowired
+    private AlbumAttributeValueService albumPropertyValueService;
+
+    @Operation(summary = "根据albumId查询专辑属性值")
+    @GetMapping("getAlbumPropertyValue/{albumId}")
+    public List<AlbumAttributeValue> getAlbumPropertyValue(@PathVariable Long albumId) {
+        LambdaQueryWrapper<AlbumAttributeValue> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(AlbumAttributeValue::getAlbumId, albumId);
+        List<AlbumAttributeValue> attributeValueList = albumPropertyValueService.list(wrapper);
+        return attributeValueList;
     }
 }

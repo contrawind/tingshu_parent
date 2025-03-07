@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="ae9db2f1-8fa3-44e7-890c-c71b2c51685b" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/tingshu_core/tingshu_search/src/main/java/com/atguigu/consumer/SearchConsumer.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tingshu_core/tingshu_search/src/main/java/com/atguigu/controller/SearchController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tingshu_core/tingshu_search/src/main/java/com/atguigu/repository/AlbumRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tingshu_core/tingshu_search/src/main/java/com/atguigu/service/SearchService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tingshu_core/tingshu_search/src/main/java/com/atguigu/service/impl/SearchServiceImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tingshu_feign_client/src/main/java/com/atguigu/AlbumFeignClient.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tingshu_feign_client/src/main/java/com/atguigu/CategoryFeignClient.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tingshu_feign_client/src/main/java/com/atguigu/SearchFeignClient.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tingshu_feign_client/src/main/java/com/atguigu/UserFeignClient.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tingshu_feign_client/src/main/java/com/atguigu/fallback/AlbumInfoFallBack.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/uiDesigner.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tingshu_common/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/tingshu_common/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tingshu_core/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/tingshu_core/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tingshu_core/tingshu_album/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/tingshu_core/tingshu_album/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tingshu_core/tingshu_album/src/main/java/com/atguigu/controller/AlbumController.java" beforeDir="false" afterPath="$PROJECT_DIR$/tingshu_core/tingshu_album/src/main/java/com/atguigu/controller/AlbumController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tingshu_core/tingshu_album/src/main/java/com/atguigu/controller/CategoryController.java" beforeDir="false" afterPath="$PROJECT_DIR$/tingshu_core/tingshu_album/src/main/java/com/atguigu/controller/CategoryController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tingshu_core/tingshu_album/src/main/java/com/atguigu/mapper/BaseCategoryViewMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/tingshu_core/tingshu_album/src/main/java/com/atguigu/mapper/BaseCategoryViewMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tingshu_core/tingshu_album/src/main/java/com/atguigu/minio/MinioUploader.java" beforeDir="false" afterPath="$PROJECT_DIR$/tingshu_core/tingshu_album/src/main/java/com/atguigu/minio/MinioUploader.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tingshu_core/tingshu_album/src/main/java/com/atguigu/service/BaseCategory3Service.java" beforeDir="false" afterPath="$PROJECT_DIR$/tingshu_core/tingshu_album/src/main/java/com/atguigu/service/BaseCategory3Service.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tingshu_core/tingshu_album/src/main/java/com/atguigu/service/BaseCategoryViewService.java" beforeDir="false" afterPath="$PROJECT_DIR$/tingshu_core/tingshu_album/src/main/java/com/atguigu/service/BaseCategoryViewService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tingshu_core/tingshu_album/src/main/java/com/atguigu/service/impl/AlbumInfoServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/tingshu_core/tingshu_album/src/main/java/com/atguigu/service/impl/AlbumInfoServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tingshu_core/tingshu_album/src/main/java/com/atguigu/service/impl/BaseCategory3ServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/tingshu_core/tingshu_album/src/main/java/com/atguigu/service/impl/BaseCategory3ServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tingshu_core/tingshu_album/src/main/java/com/atguigu/service/impl/BaseCategoryViewServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/tingshu_core/tingshu_album/src/main/java/com/atguigu/service/impl/BaseCategoryViewServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tingshu_core/tingshu_album/src/main/resources/xml/BaseCategoryViewMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/tingshu_core/tingshu_album/src/main/resources/xml/BaseCategoryViewMapper.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tingshu_core/tingshu_search/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/tingshu_core/tingshu_search/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tingshu_core/tingshu_user/src/main/java/com/atguigu/controller/UserInfoController.java" beforeDir="false" afterPath="$PROJECT_DIR$/tingshu_core/tingshu_user/src/main/java/com/atguigu/controller/UserInfoController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tingshu_model/src/main/java/com/atguigu/entity/AlbumInfoIndex.java" beforeDir="false" afterPath="$PROJECT_DIR$/tingshu_model/src/main/java/com/atguigu/entity/AlbumInfoIndex.java" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Interface" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;contrawind&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/contrawind/tingshu_parent.git&quot;,
+    &quot;accountId&quot;: &quot;6b482540-24d3-4ab1-a389-00555a6254f9&quot;
+  }
+}</component>
+  <component name="KubernetesApiPersistence"><![CDATA[{}]]></component>
+  <component name="KubernetesApiProvider"><![CDATA[{
+  "isMigrated": true
+}]]></component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="customMavenHome" value="D:\tingshu_project\apache-maven-3.5.0" />
+        <option name="mavenHomeTypeForPersistence" value="CUSTOM" />
+        <option name="userSettingsFile" value="D:\tingshu_project\apache-maven-3.5.0\conf\settings.xml" />
+      </MavenGeneralSettings>
+    </option>
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 5
+}</component>
+  <component name="ProjectId" id="2ttDLPXyNaIVSDJs6v7EfGUWvc3" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+    <option name="showScratchesAndConsoles" value="false" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Maven.tingshu_common_log [clean].executor": "Run",
+    "Maven.tingshu_common_log [package].executor": "Run",
+    "Maven.tingshu_core_utils [clean].executor": "Run",
+    "Maven.tingshu_core_utils [package].executor": "Run",
+    "Maven.tingshu_model [clean].executor": "Run",
+    "Maven.tingshu_model [package].executor": "Run",
+    "Maven.tingshu_parent [clean].executor": "Run",
+    "Maven.tingshu_parent [package].executor": "Run",
+    "Maven.tingshu_user [clean].executor": "Run",
+    "Maven.tingshu_user [package].executor": "Run",
+    "RequestMappingsPanelOrder0": "0",
+    "RequestMappingsPanelOrder1": "1",
+    "RequestMappingsPanelWidth0": "75",
+    "RequestMappingsPanelWidth1": "75",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "Spring Boot.AlbumApplication.executor": "Debug",
+    "Spring Boot.GatewayApplication.executor": "Debug",
+    "Spring Boot.SearchApplication.executor": "Debug",
+    "Spring Boot.UserApplication.executor": "Debug",
+    "git-widget-placeholder": "main",
+    "kotlin-language-version-configured": "true",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "Modules",
+    "project.structure.proportion": "0.14550781",
+    "project.structure.side.proportion": "0.2",
+    "run.configurations.included.in.services": "true",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "vue.rearranger.settings.migration": "true"
+  },
+  "keyToStringList": {
+    "DatabaseDriversLRU": [
+      "mysql"
+    ]
+  }
+}]]></component>
+  <component name="ReactorSettings">
+    <option name="notificationShown" value="true" />
+  </component>
+  <component name="RunDashboard">
+    <option name="configurationTypes">
+      <set>
+        <option value="MicronautRunConfigurationType" />
+        <option value="QuarkusRunConfigurationType" />
+        <option value="SpringBootApplicationConfigurationType" />
+      </set>
+    </option>
+  </component>
+  <component name="RunManager" selected="Spring Boot.SearchApplication">
+    <configuration name="AlbumApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" temporary="true" nameIsGenerated="true">
+      <module name="tingshu_album" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.atguigu.AlbumApplication" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.atguigu.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="GatewayApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" temporary="true" nameIsGenerated="true">
+      <module name="tingshu_gateway" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.atguigu.GatewayApplication" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.atguigu.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="SearchApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" temporary="true" nameIsGenerated="true">
+      <module name="tingshu_search" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.atguigu.SearchApplication" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.atguigu.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="UserApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" temporary="true" nameIsGenerated="true">
+      <module name="tingshu_user" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.atguigu.UserApplication" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.atguigu.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <list>
+      <item itemvalue="Spring Boot.AlbumApplication" />
+      <item itemvalue="Spring Boot.GatewayApplication" />
+      <item itemvalue="Spring Boot.SearchApplication" />
+      <item itemvalue="Spring Boot.UserApplication" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Spring Boot.AlbumApplication" />
+        <item itemvalue="Spring Boot.SearchApplication" />
+        <item itemvalue="Spring Boot.UserApplication" />
+        <item itemvalue="Spring Boot.GatewayApplication" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9f38398b9061-39b83d9b5494-intellij.indexing.shared.core-IU-241.18034.62" />
+        <option value="bundled-js-predefined-1d06a55b98c1-0b3e54e931b4-JavaScript-IU-241.18034.62" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="ae9db2f1-8fa3-44e7-890c-c71b2c51685b" name="Changes" comment="" />
+      <created>1724209766694</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1724209766694</updated>
+      <workItem from="1741162421755" duration="279000" />
+      <workItem from="1741162727446" duration="19904000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint type="java-method">
+          <url>file://$PROJECT_DIR$/tingshu_core/tingshu_album/src/main/java/com/atguigu/service/BaseCategory3Service.java</url>
+          <line>17</line>
+          <properties class="com.atguigu.service.BaseCategory3Service" method="getCategory3ListByCategory1Id">
+            <option name="EMULATED" value="true" />
+            <option name="WATCH_EXIT" value="false" />
+          </properties>
+          <option name="timeStamp" value="3" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+</project>

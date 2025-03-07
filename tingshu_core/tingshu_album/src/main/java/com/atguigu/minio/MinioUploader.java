@@ -15,7 +15,6 @@ import java.util.UUID;
 public class MinioUploader {
     @Autowired
     private MinioProperties minioProperties;
-    @Autowired
     private MinioClient minioClient;
 
 

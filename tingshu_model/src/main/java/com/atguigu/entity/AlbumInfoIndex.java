@@ -34,7 +34,7 @@ public class AlbumInfoIndex implements Serializable {
     private String announcerName;
 
     //专辑封面
-    @Field(type = FieldType.Keyword, index = false)
+    @Field(type = FieldType.Keyword, index = false)//index = false 不开启倒排索引
     private String coverUrl;
 
     //专辑包含声音总数

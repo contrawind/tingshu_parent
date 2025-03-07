@@ -4,6 +4,7 @@ import com.atguigu.entity.BaseCategoryView;
 import com.atguigu.vo.CategoryVo;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -18,5 +19,5 @@ import java.util.List;
 @Mapper
 public interface BaseCategoryViewMapper extends BaseMapper<BaseCategoryView> {
 
-    List<CategoryVo> getAllCategoryList();
+    List<CategoryVo> getAllCategoryList(@Param("category1Id") Long category1Id);
 }
