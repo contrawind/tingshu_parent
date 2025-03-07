@@ -5,11 +5,14 @@ import com.atguigu.entity.AlbumAttributeValue;
 import com.atguigu.entity.AlbumInfo;
 import com.atguigu.login.TingShuLogin;
 import com.atguigu.mapper.AlbumInfoMapper;
+import com.atguigu.mapper.AlbumStatMapper;
 import com.atguigu.query.AlbumInfoQuery;
 import com.atguigu.result.RetVal;
 import com.atguigu.service.AlbumAttributeValueService;
 import com.atguigu.service.AlbumInfoService;
 import com.atguigu.util.AuthContextHolder;
+import com.atguigu.vo.AlbumSearchVo;
+import com.atguigu.vo.AlbumStatVo;
 import com.atguigu.vo.AlbumTempVo;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -126,6 +129,16 @@ public class AlbumController {
         wrapper.eq(AlbumAttributeValue::getAlbumId, albumId);
         List<AlbumAttributeValue> attributeValueList = albumPropertyValueService.list(wrapper);
         return attributeValueList;
+    }
+
+    @Autowired
+    private AlbumStatMapper albumStatMapper;
+
+    @Operation(summary = "获取专辑统计信息")
+    @GetMapping("getAlbumStatInfo/{albumId}")
+    public AlbumStatVo getAlbumStatInfo(@PathVariable Long albumId) {
+        AlbumStatVo albumStatVo = albumStatMapper.getAlbumStatInfo(albumId);
+        return albumStatVo;
     }
 
 }
