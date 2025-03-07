@@ -1,5 +1,8 @@
 package com.atguigu.service;
 
+import com.atguigu.query.AlbumIndexQuery;
+import com.atguigu.vo.AlbumSearchResponseVo;
+
 import java.util.List;
 import java.util.Map;
 
@@ -10,5 +13,7 @@ public interface SearchService {
     void offSaleAlbum(Long albumId);
 
     List<Map<Object, Object>> getChannelData(Long category1Id);
+
+    AlbumSearchResponseVo search(AlbumIndexQuery albumIndexQuery);
 }
 
