@@ -5,10 +5,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ae9db2f1-8fa3-44e7-890c-c71b2c51685b" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/tingshu_common/tingshu_core_utils/src/main/java/com/atguigu/threadpool/MyThreadPool.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tingshu_common/tingshu_core_utils/src/main/java/com/atguigu/threadpool/MyThreadProperties.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tingshu_core/tingshu_user/src/main/java/com/atguigu/controller/VipConfigController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tingshu_core/tingshu_search/src/main/java/com/atguigu/service/impl/SearchServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/tingshu_core/tingshu_search/src/main/java/com/atguigu/service/impl/SearchServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tingshu_core/tingshu_album/src/main/java/com/atguigu/controller/AlbumController.java" beforeDir="false" afterPath="$PROJECT_DIR$/tingshu_core/tingshu_album/src/main/java/com/atguigu/controller/AlbumController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tingshu_core/tingshu_album/src/main/java/com/atguigu/service/AlbumInfoService.java" beforeDir="false" afterPath="$PROJECT_DIR$/tingshu_core/tingshu_album/src/main/java/com/atguigu/service/AlbumInfoService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tingshu_core/tingshu_album/src/main/java/com/atguigu/service/impl/AlbumInfoServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/tingshu_core/tingshu_album/src/main/java/com/atguigu/service/impl/AlbumInfoServiceImpl.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -97,7 +100,8 @@
   },
   "keyToStringList": {
     "DatabaseDriversLRU": [
-      "mysql"
+      "mysql",
+      "mongo"
     ]
   }
 }]]></component>
@@ -106,6 +110,7 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="com.atguigu.controller" />
       <recent name="com.atguigu.repository" />
     </key>
   </component>
@@ -203,7 +208,7 @@
       <option name="presentableId" value="Default" />
       <updated>1724209766694</updated>
       <workItem from="1741162421755" duration="279000" />
-      <workItem from="1741162727446" duration="37581000" />
+      <workItem from="1741162727446" duration="41352000" />
     </task>
     <servers />
   </component>
@@ -257,6 +262,16 @@
           <url>file://$PROJECT_DIR$/tingshu_core/tingshu_search/src/main/java/com/atguigu/service/impl/SearchServiceImpl.java</url>
           <line>288</line>
           <option name="timeStamp" value="19" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/tingshu_core/tingshu_user/src/main/java/com/atguigu/controller/VipConfigController.java</url>
+          <line>37</line>
+          <option name="timeStamp" value="22" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/tingshu_core/tingshu_user/src/main/java/com/atguigu/controller/VipConfigController.java</url>
+          <line>38</line>
+          <option name="timeStamp" value="23" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

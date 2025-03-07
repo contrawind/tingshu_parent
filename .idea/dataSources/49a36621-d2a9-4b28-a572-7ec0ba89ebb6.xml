@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataSource name="@192.168.168.131 [2]">
+  <database-model serializer="dbm" dbms="MONGO" family-id="MONGO" format-version="4.52">
+    <root id="1">
+      <ServerVersion>7.0.2</ServerVersion>
+    </root>
+    <schema id="2" parent="1" name="admin">
+      <LastIntrospectionLocalTimestamp>2025-03-07.17:31:16</LastIntrospectionLocalTimestamp>
+    </schema>
+    <schema id="3" parent="1" name="config"/>
+    <schema id="4" parent="1" name="local"/>
+  </database-model>
+</dataSource>

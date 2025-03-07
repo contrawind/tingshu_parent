@@ -11,7 +11,6 @@ import com.atguigu.result.RetVal;
 import com.atguigu.service.AlbumAttributeValueService;
 import com.atguigu.service.AlbumInfoService;
 import com.atguigu.util.AuthContextHolder;
-import com.atguigu.vo.AlbumSearchVo;
 import com.atguigu.vo.AlbumStatVo;
 import com.atguigu.vo.AlbumTempVo;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -141,4 +140,11 @@ public class AlbumController {
         return albumStatVo;
     }
 
+    @TingShuLogin
+    @Operation(summary = "是否订阅")
+    @GetMapping("isSubscribe/{albumId}")
+    public RetVal isSubscribe(@PathVariable Long albumId) {
+        boolean flag = albumInfoService.isSubscribe(albumId);
+        return RetVal.ok(flag);
+    }
 }
