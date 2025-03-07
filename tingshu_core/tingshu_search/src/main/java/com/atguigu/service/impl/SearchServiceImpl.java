@@ -23,6 +23,7 @@ import com.atguigu.repository.AlbumRepository;
 import com.atguigu.repository.SuggestRepository;
 import com.atguigu.service.SearchService;
 import com.atguigu.util.PinYinUtils;
+import com.atguigu.util.SleepUtils;
 import com.atguigu.vo.AlbumInfoIndexVo;
 import com.atguigu.vo.AlbumSearchResponseVo;
 import com.atguigu.vo.AlbumStatVo;
@@ -36,6 +37,9 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 @Service
@@ -89,16 +93,16 @@ public class SearchServiceImpl implements SearchService {
         albumRepository.save(albumInfoIndex);
         //专辑自动补全的内容
         SuggestIndex suggestIndex = new SuggestIndex();
-        suggestIndex.setId(UUID.randomUUID().toString().replaceAll("-",""));
+        suggestIndex.setId(UUID.randomUUID().toString().replaceAll("-", ""));
         suggestIndex.setTitle(albumInfo.getAlbumTitle());
         suggestIndex.setKeyword(new Completion(new String[]{albumInfo.getAlbumTitle()}));
         suggestIndex.setKeywordPinyin(new Completion(new String[]{PinYinUtils.toHanyuPinyin(albumInfo.getAlbumTitle())}));
         suggestIndex.setKeywordSequence(new Completion(new String[]{PinYinUtils.getFirstLetter(albumInfo.getAlbumTitle())}));
         suggestRepository.save(suggestIndex);
         //专辑主播名称自动补全
-        if(!StringUtils.isEmpty(albumInfoIndex.getAnnouncerName())){
+        if (!StringUtils.isEmpty(albumInfoIndex.getAnnouncerName())) {
             SuggestIndex announcerSuggestIndex = new SuggestIndex();
-            announcerSuggestIndex.setId(UUID.randomUUID().toString().replaceAll("-",""));
+            announcerSuggestIndex.setId(UUID.randomUUID().toString().replaceAll("-", ""));
             announcerSuggestIndex.setTitle(albumInfoIndex.getAnnouncerName());
             announcerSuggestIndex.setKeyword(new Completion(new String[]{albumInfoIndex.getAnnouncerName()}));
             announcerSuggestIndex.setKeywordPinyin(new Completion(new String[]{PinYinUtils.toHanyuPinyin(albumInfoIndex.getAnnouncerName())}));
@@ -177,16 +181,16 @@ public class SearchServiceImpl implements SearchService {
     @SneakyThrows
     @Override
     public HashSet<String> autoCompleteSuggest(String keyword) {
-        Suggester suggester=new Suggester.Builder()
-                .suggesters("suggestionKeyword",s->s
+        Suggester suggester = new Suggester.Builder()
+                .suggesters("suggestionKeyword", s -> s
                         .prefix(keyword)
-                        .completion(c->c.field("keyword")))
-                .suggesters("suggestionKeywordPinyin",s->s
+                        .completion(c -> c.field("keyword")))
+                .suggesters("suggestionKeywordPinyin", s -> s
                         .prefix(keyword)
-                        .completion(c->c.field("keywordPinyin")))
-                .suggesters("suggestionKeywordSequence",s->s
+                        .completion(c -> c.field("keywordPinyin")))
+                .suggesters("suggestionKeywordSequence", s -> s
                         .prefix(keyword)
-                        .completion(c->c.field("keywordSequence"))).build();
+                        .completion(c -> c.field("keywordSequence"))).build();
         System.out.println(suggester.toString());
         SearchResponse<SuggestIndex> suggestResponse = elasticsearchClient.search(s -> s
                 .index("suggestinfo")
@@ -194,7 +198,7 @@ public class SearchServiceImpl implements SearchService {
         //2.解析自动补全结果
         HashSet<String> suggestSet = analysisResponse(suggestResponse);
         //3.如果上面自动补全的比较少
-        if(suggestSet.size()<5){
+        if (suggestSet.size() < 5) {
             SearchResponse<SuggestIndex> searchResponse = elasticsearchClient.search(s -> s.index("suggestinfo")
                             .size(10)
                             .query(q -> q.match(m -> m.field("title").query(keyword)))
@@ -204,7 +208,7 @@ public class SearchServiceImpl implements SearchService {
                 suggestSet.add(suggestHit.source().getTitle());
                 int size = suggestSet.size();
                 //自动补全不要超过10个
-                if(size>10) break;
+                if (size > 10) break;
             }
         }
         return suggestSet;
@@ -213,27 +217,66 @@ public class SearchServiceImpl implements SearchService {
     @Override
     public Map<String, Object> getAlbumDetail(Long albumId) {
         Map<String, Object> retMap = new HashMap<>();
-        //a.专辑基本信息 已写
-        AlbumInfo albumInfo = albumFeignClient.getAlbumInfoById(albumId).getData();
-        retMap.put("albumInfo",albumInfo);
-        //b.专辑统计信息 未写
-        AlbumStatVo albumStatInfo = albumFeignClient.getAlbumStatInfo(albumId);
-        retMap.put("albumStatVo",albumStatInfo);
-        //c.专辑分类信息 已写
-        BaseCategoryView categoryView = categoryFeignClient.getCategoryView(albumInfo.getCategory3Id());
-        retMap.put("baseCategoryView",categoryView);
-        //d.用户基本信息 已写
-        UserInfoVo userInfoVo = userFeignClient.getUserById(albumInfo.getUserId()).getData();
-        retMap.put("announcer",userInfoVo);
+        CompletableFuture<AlbumInfo> albumFuture = CompletableFuture.supplyAsync(() -> {
+            //a.专辑基本信息 已写
+            AlbumInfo albumInfo = albumFeignClient.getAlbumInfoById(albumId).getData();
+            retMap.put("albumInfo", albumInfo);
+            return albumInfo;
+        });
+        CompletableFuture<Void> statFuture = CompletableFuture.runAsync(() -> {
+            //b.专辑统计信息 未写
+            AlbumStatVo albumStatInfo = albumFeignClient.getAlbumStatInfo(albumId);
+            retMap.put("albumStatVo", albumStatInfo);
+        });
+        CompletableFuture<Void> categoryViewFuture = albumFuture.thenAcceptAsync(albumInfo -> {
+            //c.专辑分类信息 已写
+            BaseCategoryView categoryView = categoryFeignClient.getCategoryView(albumInfo.getCategory3Id());
+            retMap.put("baseCategoryView", categoryView);
+        });
+        CompletableFuture<Void> announcerFuture = albumFuture.thenAcceptAsync(albumInfo -> {
+            //d.用户基本信息 已写
+            UserInfoVo userInfoVo = userFeignClient.getUserById(albumInfo.getUserId()).getData();
+            retMap.put("announcer", userInfoVo);
+
+        });
+        //等待所有任务完成，再去执行return
+        CompletableFuture.allOf(albumFuture, statFuture, categoryViewFuture, announcerFuture).join();
+
         return retMap;
     }
+
+//    @Override
+//    public Map<String, Object> getAlbumDetail(Long albumId) {
+//        Map<String, Object> retMap = new HashMap<>();
+//        new Thread(() -> {
+//            //a.专辑基本信息 已写
+//            AlbumInfo albumInfo = albumFeignClient.getAlbumInfoById(albumId).getData();
+//            retMap.put("albumInfo", albumInfo);
+//        }).start();
+//        new Thread(() -> {
+//            //b.专辑统计信息 未写
+//            AlbumStatVo albumStatInfo = albumFeignClient.getAlbumStatInfo(albumId);
+//            retMap.put("albumStatVo", albumStatInfo);
+//        }).start();
+//        new Thread(() -> {
+//            //c.专辑分类信息 已写
+//            BaseCategoryView categoryView = categoryFeignClient.getCategoryView(albumInfo.getCategory3Id());
+//            retMap.put("baseCategoryView", categoryView);
+//        }).start();
+//        new Thread(() -> {
+//            //d.用户基本信息 已写
+//            UserInfoVo userInfoVo = userFeignClient.getUserById(albumInfo.getUserId()).getData();
+//            retMap.put("announcer", userInfoVo);
+//        }).start();
+//        return retMap;
+//    }
 
     private HashSet<String> analysisResponse(SearchResponse<SuggestIndex> suggestResponse) {
         HashSet<String> suggestSet = new HashSet<>();
         Map<String, List<Suggestion<SuggestIndex>>> suggestMap = suggestResponse.suggest();
-        suggestMap.entrySet().stream().forEach(suggestEntry->{
+        suggestMap.entrySet().stream().forEach(suggestEntry -> {
             List<Suggestion<SuggestIndex>> suggestValueList = suggestEntry.getValue();
-            suggestValueList.stream().forEach(suggestValue->{
+            suggestValueList.stream().forEach(suggestValue -> {
                 List<String> suggestTitleList = suggestValue.completion().options().stream()
                         .map(m -> m.source().getTitle()).collect(Collectors.toList());
                 suggestSet.addAll(suggestTitleList);
