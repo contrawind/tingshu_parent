@@ -18,9 +18,11 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -100,6 +102,21 @@ public class TrackInfoServiceImpl extends ServiceImpl<TrackInfoMapper, TrackInfo
     @Override
     public IPage<AlbumTrackListVo> getAlbumDetailTrackByPage(IPage<AlbumTrackListVo> pageParam, Long albumId) {
         pageParam = baseMapper.getAlbumTrackAndStatInfo(pageParam, albumId);
+        List<AlbumTrackListVo> albumTrackVoList = pageParam.getRecords();
+        AlbumInfo albumInfo = albumInfoService.getById(albumId);
+        Long userId = AuthContextHolder.getUserId();
+        //如果用户没有登录
+        if (userId == null) {
+            //不是免费的专辑
+            if (!SystemConstant.FREE_ALBUM.equals(albumInfo.getPayType())) {
+                //获取付费的声音列表
+                List<AlbumTrackListVo> albumTrackNeedPayList = albumTrackVoList.stream().filter(f -> f.getOrderNum().intValue() > albumInfo.getTracksForFree().intValue())
+                        .collect(Collectors.toList());
+                if (!CollectionUtils.isEmpty(albumTrackNeedPayList)) {
+                    albumTrackNeedPayList.forEach(f -> f.setIsShowPaidMark(true));
+                }
+            }
+        }
         return pageParam;
     }
 
