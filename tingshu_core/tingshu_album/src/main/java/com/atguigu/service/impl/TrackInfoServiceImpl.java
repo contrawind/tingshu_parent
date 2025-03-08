@@ -1,5 +1,6 @@
 package com.atguigu.service.impl;
 
+import com.atguigu.UserFeignClient;
 import com.atguigu.constant.SystemConstant;
 import com.atguigu.entity.AlbumInfo;
 import com.atguigu.entity.TrackInfo;
@@ -12,6 +13,7 @@ import com.atguigu.service.VodService;
 import com.atguigu.util.AuthContextHolder;
 import com.atguigu.vo.AlbumTrackListVo;
 import com.atguigu.vo.TrackTempVo;
+import com.atguigu.vo.UserInfoVo;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -21,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -99,6 +102,9 @@ public class TrackInfoServiceImpl extends ServiceImpl<TrackInfoMapper, TrackInfo
         vodService.removeTrack(trackInfo.getMediaFileId());
     }
 
+    @Autowired
+    private UserFeignClient userFeignClient;
+
     @Override
     public IPage<AlbumTrackListVo> getAlbumDetailTrackByPage(IPage<AlbumTrackListVo> pageParam, Long albumId) {
         pageParam = baseMapper.getAlbumTrackAndStatInfo(pageParam, albumId);
@@ -114,6 +120,36 @@ public class TrackInfoServiceImpl extends ServiceImpl<TrackInfoMapper, TrackInfo
                         .collect(Collectors.toList());
                 if (!CollectionUtils.isEmpty(albumTrackNeedPayList)) {
                     albumTrackNeedPayList.forEach(f -> f.setIsShowPaidMark(true));
+                }
+            }
+        } else {
+            boolean isNeedPay = false;
+            //vip免费
+            if (SystemConstant.VIPFREE_ALBUM.equals(albumInfo.getPayType())) {
+                UserInfoVo userInfoVo = userFeignClient.getUserById(userId).getData();
+                //1.非vip用户
+                if (userInfoVo.getIsVip().intValue() == 0) {
+                    isNeedPay = true;
+                }
+                //2.是vip用户，但是vip过期了
+                if (userInfoVo.getIsVip().intValue() == 1 && userInfoVo.getVipExpireTime().before(new Date())) {
+                    isNeedPay = true;
+                }
+            }
+            //是vip也要付费的
+            else if (SystemConstant.NEED_PAY_ALBUM.equals(albumInfo.getPayType())) {
+                isNeedPay = true;
+            } else {
+                isNeedPay = false;
+            }
+            //需要付费 ，判断用户是否购买过专辑或声音
+            if (isNeedPay) {
+                List<AlbumTrackListVo> albumTrackNeedPayList = albumTrackVoList.stream().filter(f -> f.getOrderNum().intValue() > albumInfo.getTracksForFree().intValue())
+                        .collect(Collectors.toList());
+                if (!CollectionUtils.isEmpty(albumTrackNeedPayList)) {
+                    //拿到需要付费专辑的id
+                    List<Long> needPayTrackIdList = albumTrackNeedPayList.stream().map(AlbumTrackListVo::getTrackId).collect(Collectors.toList());
+
                 }
             }
         }
