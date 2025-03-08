@@ -5,15 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ae9db2f1-8fa3-44e7-890c-c71b2c51685b" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/tingshu_core/tingshu_album/src/main/java/com/atguigu/consumer/AlbumConsumer.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tingshu_core/tingshu_album/src/main/java/com/atguigu/controller/ListenController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tingshu_core/tingshu_album/src/main/java/com/atguigu/service/ListenService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tingshu_core/tingshu_album/src/main/java/com/atguigu/service/impl/ListenServiceImpl.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tingshu_common/tingshu_core_utils/src/main/java/com/atguigu/interceptor/FeignInterceptor.java" beforeDir="false" afterPath="$PROJECT_DIR$/tingshu_common/tingshu_core_utils/src/main/java/com/atguigu/interceptor/FeignInterceptor.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tingshu_core/tingshu_album/src/main/java/com/atguigu/controller/CategoryController.java" beforeDir="false" afterPath="$PROJECT_DIR$/tingshu_core/tingshu_album/src/main/java/com/atguigu/controller/CategoryController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tingshu_core/tingshu_album/src/main/java/com/atguigu/service/impl/TrackInfoServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/tingshu_core/tingshu_album/src/main/java/com/atguigu/service/impl/TrackInfoServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tingshu_core/tingshu_search/src/main/java/com/atguigu/controller/SearchController.java" beforeDir="false" afterPath="$PROJECT_DIR$/tingshu_core/tingshu_search/src/main/java/com/atguigu/controller/SearchController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tingshu_core/tingshu_search/src/main/java/com/atguigu/service/SearchService.java" beforeDir="false" afterPath="$PROJECT_DIR$/tingshu_core/tingshu_search/src/main/java/com/atguigu/service/SearchService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tingshu_core/tingshu_search/src/main/java/com/atguigu/service/impl/SearchServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/tingshu_core/tingshu_search/src/main/java/com/atguigu/service/impl/SearchServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tingshu_feign_client/src/main/java/com/atguigu/CategoryFeignClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/tingshu_feign_client/src/main/java/com/atguigu/CategoryFeignClient.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tingshu_feign_client/src/main/java/com/atguigu/UserFeignClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/tingshu_feign_client/src/main/java/com/atguigu/UserFeignClient.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -211,7 +207,7 @@
       <updated>1724209766694</updated>
       <workItem from="1741162421755" duration="279000" />
       <workItem from="1741162727446" duration="41352000" />
-      <workItem from="1741400904426" duration="12106000" />
+      <workItem from="1741400904426" duration="20703000" />
     </task>
     <servers />
   </component>
@@ -232,24 +228,6 @@
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
-        <line-breakpoint type="java-method">
-          <url>file://$PROJECT_DIR$/tingshu_core/tingshu_album/src/main/java/com/atguigu/service/BaseCategory3Service.java</url>
-          <line>17</line>
-          <properties class="com.atguigu.service.BaseCategory3Service" method="getCategory3ListByCategory1Id">
-            <option name="EMULATED" value="true" />
-            <option name="WATCH_EXIT" value="false" />
-          </properties>
-          <option name="timeStamp" value="3" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-method">
-          <url>file://$PROJECT_DIR$/tingshu_core/tingshu_search/src/main/java/com/atguigu/service/SearchService.java</url>
-          <line>22</line>
-          <properties class="com.atguigu.service.SearchService" method="updateRanking">
-            <option name="EMULATED" value="true" />
-            <option name="WATCH_EXIT" value="false" />
-          </properties>
-          <option name="timeStamp" value="29" />
-        </line-breakpoint>
         <line-breakpoint type="java-line">
           <url>file://$PROJECT_DIR$/tingshu_core/tingshu_search/src/main/java/com/atguigu/service/impl/SearchServiceImpl.java</url>
           <line>186</line>
@@ -275,12 +253,12 @@
           <line>324</line>
           <option name="timeStamp" value="19" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
+        <line-breakpoint type="java-line">
           <url>file://$PROJECT_DIR$/tingshu_core/tingshu_user/src/main/java/com/atguigu/controller/VipConfigController.java</url>
           <line>37</line>
           <option name="timeStamp" value="22" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
+        <line-breakpoint type="java-line">
           <url>file://$PROJECT_DIR$/tingshu_core/tingshu_user/src/main/java/com/atguigu/controller/VipConfigController.java</url>
           <line>38</line>
           <option name="timeStamp" value="23" />
