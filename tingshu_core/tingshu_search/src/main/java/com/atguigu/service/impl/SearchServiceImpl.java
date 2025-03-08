@@ -17,6 +17,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.atguigu.AlbumFeignClient;
 import com.atguigu.CategoryFeignClient;
 import com.atguigu.UserFeignClient;
+import com.atguigu.constant.RedisConstant;
 import com.atguigu.entity.*;
 import com.atguigu.query.AlbumIndexQuery;
 import com.atguigu.repository.AlbumRepository;
@@ -32,6 +33,7 @@ import lombok.SneakyThrows;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.elasticsearch.core.suggest.Completion;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -248,6 +250,40 @@ public class SearchServiceImpl implements SearchService {
 
         return retMap;
     }
+
+    @Autowired
+    private RedisTemplate redisTemplate;
+
+    @SneakyThrows
+    @Override
+    public void updateRanking() {
+        List<BaseCategory1> category1List = categoryFeignClient.getCategory1();
+        if(!CollectionUtils.isEmpty(category1List)){
+            for (BaseCategory1 category1 : category1List) {
+                //统计维度：热度:hotScore、播放量:playStatNum、订阅量:subscribeStatNum、购买量:buyStatNum、评论数:albumCommentStatNum
+                String[] rankingTypeList = new String[]{"hotScore", "playStatNum", "subscribeStatNum", "buyStatNum", "commentStatNum"};
+                for (String rankingType : rankingTypeList) {
+                    SearchResponse<AlbumInfoIndex> response = elasticsearchClient.search(s -> s
+                                    .index("albuminfo")
+                                    .query(q->q.bool(b->b.filter(f->f.term(
+                                            t->t.field("category1Id").value(category1.getId())))))
+                                    .size(10)
+                                    .sort(t -> t.field(xs -> xs.field(rankingType).order(SortOrder.Desc)))
+                            , AlbumInfoIndex.class);
+                    ArrayList<AlbumInfoIndex> albumList = new ArrayList<>();
+                    response.hits().hits().stream().forEach(hit -> {
+                        AlbumInfoIndex albumInfoIndex = hit.source();
+                        albumList.add(albumInfoIndex);
+                    });
+                    //将排行榜信息放到redis中
+                    redisTemplate.boundHashOps(RedisConstant.RANKING_KEY_PREFIX + category1.getId()).put(rankingType, albumList);
+                }
+            }
+        }
+
+
+    }
+
 
 //    @Override
 //    public Map<String, Object> getAlbumDetail(Long albumId) {

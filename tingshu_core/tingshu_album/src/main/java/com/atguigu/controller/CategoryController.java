@@ -1,15 +1,17 @@
 package com.atguigu.controller;
 
 import com.atguigu.entity.BaseAttribute;
+import com.atguigu.entity.BaseCategory1;
 import com.atguigu.entity.BaseCategory3;
 import com.atguigu.entity.BaseCategoryView;
 import com.atguigu.login.TingShuLogin;
 import com.atguigu.mapper.BaseAttributeMapper;
 import com.atguigu.result.RetVal;
+import com.atguigu.service.BaseCategory1Service;
 import com.atguigu.service.BaseCategory3Service;
 import com.atguigu.service.BaseCategoryViewService;
-import com.atguigu.util.AuthContextHolder;
 import com.atguigu.vo.CategoryVo;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -99,4 +101,16 @@ public class CategoryController {
         }
         return RetVal.ok();
     }
+
+    @Autowired
+    private BaseCategory1Service category1Service;
+
+    @Operation(summary = "查询所有一级分类")
+    @GetMapping("getCategory1")
+    public List<BaseCategory1> getCategory1() {
+        LambdaQueryWrapper<BaseCategory1> wrapper = new LambdaQueryWrapper<>();
+        wrapper.orderByAsc(BaseCategory1::getOrderNum);
+        return category1Service.list(wrapper);
+    }
+
 }

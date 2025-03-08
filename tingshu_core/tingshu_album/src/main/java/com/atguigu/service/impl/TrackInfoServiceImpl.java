@@ -25,6 +25,7 @@ import org.springframework.util.CollectionUtils;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -149,6 +150,10 @@ public class TrackInfoServiceImpl extends ServiceImpl<TrackInfoMapper, TrackInfo
                 if (!CollectionUtils.isEmpty(albumTrackNeedPayList)) {
                     //拿到需要付费专辑的id
                     List<Long> needPayTrackIdList = albumTrackNeedPayList.stream().map(AlbumTrackListVo::getTrackId).collect(Collectors.toList());
+                    Map<Long, Boolean> paidMarkMap = userFeignClient.getUserShowPaidMarkOrNot(albumId, needPayTrackIdList).getData();
+                    albumTrackNeedPayList.forEach(item -> {
+                        item.setIsShowPaidMark(paidMarkMap.get(item.getTrackId()));
+                    });
 
                 }
             }

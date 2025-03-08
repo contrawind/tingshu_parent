@@ -16,6 +16,6 @@ public interface UserFeignClient {
     @GetMapping("api/user/userInfo/getUserById/{userId}")
     public RetVal<UserInfoVo> getUserById(@PathVariable Long userId);
 
-    @PostMapping("api/user/userInfogetUserShowPaidMarkOrNot/{albumId}")
+    @PostMapping("api/user/userInfo/getUserShowPaidMarkOrNot/{albumId}")
     public RetVal<Map<Long, Boolean>> getUserShowPaidMarkOrNot(@PathVariable Long albumId, @RequestBody List<Long> needPayTrackIdList);
 }
