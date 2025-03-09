@@ -17,6 +17,7 @@ import com.atguigu.vo.UserInfoVo;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -159,6 +160,17 @@ public class TrackInfoServiceImpl extends ServiceImpl<TrackInfoMapper, TrackInfo
             }
         }
         return pageParam;
+    }
+
+    @Override
+    public List<TrackTempVo> getTrackVoList(List<Long> trackIdList) {
+        List<TrackInfo> trackInfoList = listByIds(trackIdList);
+        return trackInfoList.stream().map(trackInfo -> {
+            TrackTempVo trackTempVo = new TrackTempVo();
+            BeanUtils.copyProperties(trackInfo, trackTempVo);
+            trackTempVo.setTrackId(trackInfo.getId());
+            return trackTempVo;
+        }).collect(Collectors.toList());
     }
 
     private List<TrackStat> buildTrackStatData(Long trackId) {

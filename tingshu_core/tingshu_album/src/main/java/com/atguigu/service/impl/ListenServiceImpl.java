@@ -7,27 +7,32 @@ import com.atguigu.entity.UserCollect;
 import com.atguigu.entity.UserListenProcess;
 import com.atguigu.service.KafkaService;
 import com.atguigu.service.ListenService;
+import com.atguigu.service.TrackInfoService;
 import com.atguigu.util.AuthContextHolder;
 import com.atguigu.util.MongoUtil;
 import com.atguigu.vo.TrackStatMqVo;
+import com.atguigu.vo.TrackTempVo;
+import com.atguigu.vo.UserCollectVo;
 import com.atguigu.vo.UserListenProcessVo;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Service
 public class ListenServiceImpl implements ListenService {
@@ -150,6 +155,51 @@ public class ListenServiceImpl implements ListenService {
             kafkaService.sendMessage(KafkaConstant.UPDATE_TRACK_STAT_QUEUE, JSON.toJSONString(trackStatVo));
             return false;
         }
+    }
+
+    @Override
+    public boolean isCollect(Long trackId) {
+        //获取用户id
+        Long userId = AuthContextHolder.getUserId();
+        //查询mongodb中是否有用户收藏记录
+        Query query = Query.query(Criteria.where("userId").is(userId).and("trackId").is(trackId));
+        long count = mongoTemplate.count(query, MongoUtil.getCollectionName(MongoUtil.MongoCollectionEnum.USER_COLLECT, userId));
+        if (count > 0) {
+            return true;
+        }
+        return false;
+    }
+
+    @Autowired
+    private TrackInfoService trackInfoService;
+
+    @Override
+    public IPage<UserCollectVo> getUserCollectByPage(Integer pageNum, Integer pageSize) {
+        Long userId = AuthContextHolder.getUserId();
+        Query query = Query.query(Criteria.where("userId").is(userId));
+        //这里pageNum要减1
+        PageRequest pageable = PageRequest.of(pageNum - 1, pageSize);
+        query.with(pageable);
+        Sort sort = Sort.by(Sort.Direction.DESC, "createTime");
+        query.with(sort);
+        List<UserCollect> userCollectList = mongoTemplate.find(query, UserCollect.class, MongoUtil.getCollectionName(MongoUtil.MongoCollectionEnum.USER_COLLECT, userId));
+        long total = mongoTemplate.count(query, MongoUtil.getCollectionName(MongoUtil.MongoCollectionEnum.USER_COLLECT, userId));
+        List<Long> trackIdList = userCollectList.stream().map(UserCollect::getTrackId).collect(Collectors.toList());
+        List<UserCollectVo> userCollectVoList = null;
+        if (!CollectionUtils.isEmpty(trackIdList)) {
+            List<TrackTempVo> trackVoList = trackInfoService.getTrackVoList(trackIdList);
+            Map<Long, TrackTempVo> trackTempVoMap = trackVoList.stream().collect(Collectors.toMap(TrackTempVo::getTrackId, trackVo -> trackVo));
+            userCollectVoList = userCollectList.stream().map(userCollect -> {
+                UserCollectVo userCollectVo = new UserCollectVo();
+                Long trackId = userCollect.getTrackId();
+                TrackTempVo trackTempVo = trackTempVoMap.get(trackId);
+                BeanUtils.copyProperties(trackTempVo, userCollectVo);
+                userCollectVo.setTrackId(trackId);
+                userCollectVo.setCreateTime(userCollect.getCreateTime());
+                return userCollectVo;
+            }).collect(Collectors.toList());
+        }
+        return new Page(pageNum, pageSize, total).setRecords(userCollectVoList);
     }
 }
 

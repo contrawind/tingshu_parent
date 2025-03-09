@@ -14,8 +14,10 @@ import com.atguigu.service.BaseCategoryViewService;
 import com.atguigu.service.ListenService;
 import com.atguigu.vo.CategoryVo;
 import com.atguigu.vo.TrackStatVo;
+import com.atguigu.vo.UserCollectVo;
 import com.atguigu.vo.UserListenProcessVo;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
@@ -71,6 +73,23 @@ public class ListenController {
     public RetVal getTrackStatistics(@PathVariable Long trackId) {
         TrackStatVo trackStatVo = trackInfoMapper.getTrackStatistics(trackId);
         return RetVal.ok(trackStatVo);
+    }
+
+    @TingShuLogin
+    @Operation(summary = "是否收藏过")
+    @GetMapping("isCollect/{trackId}")
+    public RetVal isCollect(@PathVariable Long trackId) {
+        boolean flag = listenService.isCollect(trackId);
+        return RetVal.ok(flag);
+    }
+
+    @TingShuLogin
+    @Operation(summary = "获取用户收藏列表")
+    @GetMapping("getUserCollectByPage/{pageNum}/{pageSize}")
+    public RetVal getUserCollectByPage(@PathVariable Integer pageNum, @PathVariable Integer pageSize) {
+
+        IPage<UserCollectVo> pageParam = listenService.getUserCollectByPage(pageNum, pageSize);
+        return RetVal.ok(pageParam);
     }
 
     @TingShuLogin

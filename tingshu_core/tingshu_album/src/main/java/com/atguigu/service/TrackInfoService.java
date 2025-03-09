@@ -7,6 +7,8 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 /**
  * <p>
  * 声音信息 服务类
@@ -24,4 +26,6 @@ public interface TrackInfoService extends IService<TrackInfo> {
     void deleteTrackInfo(Long trackId);
 
     IPage<AlbumTrackListVo> getAlbumDetailTrackByPage(@Param("pageParam") IPage<AlbumTrackListVo> pageParam, @Param("albumId") Long albumId);
+
+    List<TrackTempVo> getTrackVoList(List<Long> trackIdList);
 }
