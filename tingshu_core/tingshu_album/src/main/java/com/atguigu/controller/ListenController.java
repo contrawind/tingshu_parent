@@ -20,13 +20,11 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -35,21 +33,24 @@ import java.util.Map;
  * 一级分类表 前端控制器
  * </p>
  *
- * @author 林长启
- * @since 2025-02-19
+ * @author 强哥
+ * @since 2023-11-29
  */
 @Tag(name = "听专辑管理接口")
 @RestController
 @RequestMapping(value = "/api/album/progress")
-@Slf4j
 public class ListenController {
-    //http://127.0.0.1/api/album/progress/getRecentlyPlay
-
     @Autowired
     private ListenService listenService;
-
-
-    @TingShuLogin(required = true)
+    //http://127.0.0.1/api/album/progress/updatePlaySecond
+    @TingShuLogin
+    @Operation(summary = "更新播放进度")
+    @PostMapping("updatePlaySecond")
+    public RetVal updatePlaySecond(@RequestBody UserListenProcessVo userListenProcessVo) {
+        listenService.updatePlaySecond(userListenProcessVo);
+        return RetVal.ok();
+    }
+    @TingShuLogin
     @Operation(summary = "最近播放")
     @GetMapping("getRecentlyPlay")
     public RetVal getRecentlyPlay() {
@@ -57,7 +58,7 @@ public class ListenController {
         return RetVal.ok(retMap);
     }
 
-    @TingShuLogin(required = true)
+    @TingShuLogin
     @Operation(summary = "最近播放")
     @GetMapping("getLastPlaySecond/{trackId}")
     public RetVal getLastPlaySecond(@PathVariable Long trackId) {
@@ -67,44 +68,43 @@ public class ListenController {
 
     @Autowired
     private TrackInfoMapper trackInfoMapper;
-
-    @Operation(summary = "获取声音的统计信息")
+    @Operation(summary = "获取声音统计信息")
     @GetMapping("getTrackStatistics/{trackId}")
     public RetVal getTrackStatistics(@PathVariable Long trackId) {
-        TrackStatVo trackStatVo = trackInfoMapper.getTrackStatistics(trackId);
+        TrackStatVo trackStatVo=trackInfoMapper.getTrackStatistics(trackId);
         return RetVal.ok(trackStatVo);
     }
 
     @TingShuLogin
+    @Operation(summary = "获取声音统计信息")
+    @GetMapping("collectTrack/{trackId}")
+    public RetVal collectTrack(@PathVariable Long trackId) {
+        boolean flag=listenService.collectTrack(trackId);
+        return RetVal.ok(flag);
+    }
+    //http://127.0.0.1/api/album/progress/isCollect/7217
+    @TingShuLogin
     @Operation(summary = "是否收藏过")
     @GetMapping("isCollect/{trackId}")
     public RetVal isCollect(@PathVariable Long trackId) {
-        boolean flag = listenService.isCollect(trackId);
+        boolean flag=listenService.isCollect(trackId);
         return RetVal.ok(flag);
     }
-
     @TingShuLogin
-    @Operation(summary = "获取用户收藏列表")
+    @Operation(summary = "是否收藏过")
     @GetMapping("getUserCollectByPage/{pageNum}/{pageSize}")
-    public RetVal getUserCollectByPage(@PathVariable Integer pageNum, @PathVariable Integer pageSize) {
-
-        IPage<UserCollectVo> pageParam = listenService.getUserCollectByPage(pageNum, pageSize);
+    public RetVal getUserCollectByPage(@PathVariable Integer pageNum,
+                                       @PathVariable Integer pageSize)  {
+        IPage<UserCollectVo> pageParam=listenService.getUserCollectByPage(pageNum,pageSize);
         return RetVal.ok(pageParam);
     }
-
+    //http://127.0.0.1/api/album/progress/getPlayHistoryTrackByPage/1/10
     @TingShuLogin
-    @Operation(summary = "获取声音的统计信息")
-    @GetMapping("collectTrack/{trackId}")
-    public RetVal collectTrack(@PathVariable Long trackId) {
-        boolean flag = listenService.collectTrack(trackId);
-        return RetVal.ok(flag);
-    }
-
-    @TingShuLogin(required = true)
-    @Operation(summary = "更新播放速度")
-    @PostMapping("updatePlaySecond")
-    public RetVal updatePlaySecond(@RequestBody UserListenProcessVo userListenProcessVo) {
-        listenService.updatePlaySecond(userListenProcessVo);
-        return RetVal.ok();
+    @Operation(summary = "获取用户声音历史播放列表")
+    @GetMapping("getPlayHistoryTrackByPage/{pageNum}/{pageSize}")
+    public RetVal getPlayHistoryTrackByPage(@PathVariable Integer pageNum,
+                                            @PathVariable Integer pageSize)  {
+        IPage pageParam=listenService.getPlayHistoryTrackByPage(pageNum,pageSize);
+        return RetVal.ok(pageParam);
     }
 }

@@ -20,4 +20,6 @@ public interface ListenService {
     boolean isCollect(Long trackId);
 
     IPage<UserCollectVo> getUserCollectByPage(Integer pageNum, Integer pageSize);
+
+    IPage getPlayHistoryTrackByPage(Integer pageNum, Integer pageSize);
 }
