@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -28,4 +29,6 @@ public interface TrackInfoService extends IService<TrackInfo> {
     IPage<AlbumTrackListVo> getAlbumDetailTrackByPage(@Param("pageParam") IPage<AlbumTrackListVo> pageParam, @Param("albumId") Long albumId);
 
     List<TrackTempVo> getTrackVoList(List<Long> trackIdList);
+
+    List<Map<String, Object>> getTrackListToChoose(Long trackId);
 }

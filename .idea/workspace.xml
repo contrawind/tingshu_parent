@@ -5,12 +5,28 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ae9db2f1-8fa3-44e7-890c-c71b2c51685b" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tingshu_core/tingshu_order/pom.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tingshu_core/tingshu_order/src/main/java/com/atguigu/OrderApplication.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tingshu_core/tingshu_order/src/main/java/com/atguigu/controller/OrderController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tingshu_core/tingshu_order/src/main/java/com/atguigu/controller/OrderDetailController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tingshu_core/tingshu_order/src/main/java/com/atguigu/mapper/OrderDetailMapper.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tingshu_core/tingshu_order/src/main/java/com/atguigu/mapper/OrderInfoMapper.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tingshu_core/tingshu_order/src/main/java/com/atguigu/mapper/xml/OrderDetailMapper.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tingshu_core/tingshu_order/src/main/java/com/atguigu/mapper/xml/OrderInfoMapper.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tingshu_core/tingshu_order/src/main/java/com/atguigu/service/OrderDetailService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tingshu_core/tingshu_order/src/main/java/com/atguigu/service/OrderInfoService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tingshu_core/tingshu_order/src/main/java/com/atguigu/service/impl/OrderDetailServiceImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tingshu_core/tingshu_order/src/main/java/com/atguigu/service/impl/OrderInfoServiceImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tingshu_core/tingshu_order/src/main/resources/application.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tingshu_core/tingshu_album/src/main/java/com/atguigu/controller/ListenController.java" beforeDir="false" afterPath="$PROJECT_DIR$/tingshu_core/tingshu_album/src/main/java/com/atguigu/controller/ListenController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tingshu_core/tingshu_album/src/main/java/com/atguigu/service/AlbumInfoService.java" beforeDir="false" afterPath="$PROJECT_DIR$/tingshu_core/tingshu_album/src/main/java/com/atguigu/service/AlbumInfoService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tingshu_core/tingshu_album/src/main/java/com/atguigu/service/ListenService.java" beforeDir="false" afterPath="$PROJECT_DIR$/tingshu_core/tingshu_album/src/main/java/com/atguigu/service/ListenService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tingshu_core/tingshu_album/src/main/java/com/atguigu/service/impl/AlbumInfoServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/tingshu_core/tingshu_album/src/main/java/com/atguigu/service/impl/AlbumInfoServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tingshu_core/tingshu_album/src/main/java/com/atguigu/service/impl/ListenServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/tingshu_core/tingshu_album/src/main/java/com/atguigu/service/impl/ListenServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tingshu_core/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/tingshu_core/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tingshu_core/tingshu_album/src/main/java/com/atguigu/controller/TrackController.java" beforeDir="false" afterPath="$PROJECT_DIR$/tingshu_core/tingshu_album/src/main/java/com/atguigu/controller/TrackController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tingshu_core/tingshu_album/src/main/java/com/atguigu/service/TrackInfoService.java" beforeDir="false" afterPath="$PROJECT_DIR$/tingshu_core/tingshu_album/src/main/java/com/atguigu/service/TrackInfoService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tingshu_core/tingshu_album/src/main/java/com/atguigu/service/impl/TrackInfoServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/tingshu_core/tingshu_album/src/main/java/com/atguigu/service/impl/TrackInfoServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tingshu_core/tingshu_user/src/main/java/com/atguigu/controller/UserInfoController.java" beforeDir="false" afterPath="$PROJECT_DIR$/tingshu_core/tingshu_user/src/main/java/com/atguigu/controller/UserInfoController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tingshu_feign_client/src/main/java/com/atguigu/UserFeignClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/tingshu_feign_client/src/main/java/com/atguigu/UserFeignClient.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -62,53 +78,62 @@
     <option name="showLibraryContents" value="true" />
     <option name="showScratchesAndConsoles" value="false" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Maven.tingshu_common_log [clean].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.tingshu_common_log [package].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.tingshu_core_utils [clean].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.tingshu_core_utils [package].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.tingshu_model [clean].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.tingshu_model [package].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.tingshu_parent [clean].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.tingshu_parent [package].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.tingshu_user [clean].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.tingshu_user [package].executor&quot;: &quot;Run&quot;,
-    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
-    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
-    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
-    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;Spring Boot.AlbumApplication.executor&quot;: &quot;Debug&quot;,
-    &quot;Spring Boot.GatewayApplication.executor&quot;: &quot;Debug&quot;,
-    &quot;Spring Boot.SearchApplication.executor&quot;: &quot;Debug&quot;,
-    &quot;Spring Boot.UserApplication.executor&quot;: &quot;Debug&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.14550781&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
-    &quot;run.configurations.included.in.services&quot;: &quot;true&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Maven.tingshu_common_log [clean].executor": "Run",
+    "Maven.tingshu_common_log [package].executor": "Run",
+    "Maven.tingshu_core_utils [clean].executor": "Run",
+    "Maven.tingshu_core_utils [package].executor": "Run",
+    "Maven.tingshu_model [clean].executor": "Run",
+    "Maven.tingshu_model [package].executor": "Run",
+    "Maven.tingshu_parent [clean].executor": "Run",
+    "Maven.tingshu_parent [package].executor": "Run",
+    "Maven.tingshu_user [clean].executor": "Run",
+    "Maven.tingshu_user [package].executor": "Run",
+    "RequestMappingsPanelOrder0": "0",
+    "RequestMappingsPanelOrder1": "1",
+    "RequestMappingsPanelWidth0": "75",
+    "RequestMappingsPanelWidth1": "75",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "Spring Boot.AlbumApplication.executor": "Debug",
+    "Spring Boot.GatewayApplication.executor": "Debug",
+    "Spring Boot.OrderApplication.executor": "Debug",
+    "Spring Boot.SearchApplication.executor": "Debug",
+    "Spring Boot.UserApplication.executor": "Debug",
+    "git-widget-placeholder": "main",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "D:/tingshu_project/code/tingshu_parent/tingshu_core/tingshu_order/src/main/java/com/atguigu",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "Modules",
+    "project.structure.proportion": "0.14550781",
+    "project.structure.side.proportion": "0.2",
+    "run.configurations.included.in.services": "true",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "vue.rearranger.settings.migration": "true"
   },
-  &quot;keyToStringList&quot;: {
-    &quot;DatabaseDriversLRU&quot;: [
-      &quot;mysql&quot;,
-      &quot;mongo&quot;
+  "keyToStringList": {
+    "DatabaseDriversLRU": [
+      "mysql",
+      "mongo"
     ]
   }
-}</component>
+}]]></component>
   <component name="ReactorSettings">
     <option name="notificationShown" value="true" />
   </component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\tingshu_project\code\tingshu_parent\tingshu_core\tingshu_order\src\main\java\com\atguigu" />
+    </key>
     <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="" />
+      <recent name="com.atguigu.service" />
+      <recent name="com.atguigu.mapper" />
       <recent name="com.atguigu.controller" />
       <recent name="com.atguigu.repository" />
     </key>
@@ -126,6 +151,7 @@
     <configuration name="start" type="CompoundRunConfigurationType">
       <toRun name="AlbumApplication" type="SpringBootApplicationConfigurationType" />
       <toRun name="GatewayApplication" type="SpringBootApplicationConfigurationType" />
+      <toRun name="OrderApplication" type="SpringBootApplicationConfigurationType" />
       <toRun name="SearchApplication" type="SpringBootApplicationConfigurationType" />
       <toRun name="UserApplication" type="SpringBootApplicationConfigurationType" />
       <method v="2" />
@@ -146,6 +172,19 @@
     <configuration name="GatewayApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
       <module name="tingshu_gateway" />
       <option name="SPRING_BOOT_MAIN_CLASS" value="com.atguigu.GatewayApplication" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.atguigu.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="OrderApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="tingshu_order" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.atguigu.OrderApplication" />
       <extension name="coverage">
         <pattern>
           <option name="PATTERN" value="com.atguigu.*" />
@@ -188,6 +227,7 @@
       <item itemvalue="Spring Boot.GatewayApplication" />
       <item itemvalue="Spring Boot.SearchApplication" />
       <item itemvalue="Spring Boot.UserApplication" />
+      <item itemvalue="Spring Boot.OrderApplication" />
     </list>
   </component>
   <component name="SharedIndexes">
@@ -209,7 +249,7 @@
       <workItem from="1741162421755" duration="279000" />
       <workItem from="1741162727446" duration="41352000" />
       <workItem from="1741400904426" duration="21390000" />
-      <workItem from="1741496531954" duration="11861000" />
+      <workItem from="1741496531954" duration="21097000" />
     </task>
     <servers />
   </component>

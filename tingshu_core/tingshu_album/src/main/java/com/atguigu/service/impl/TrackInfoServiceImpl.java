@@ -23,10 +23,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.math.BigDecimal;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -172,6 +170,119 @@ public class TrackInfoServiceImpl extends ServiceImpl<TrackInfoMapper, TrackInfo
             return trackTempVo;
         }).collect(Collectors.toList());
     }
+
+
+    @Override
+    public List<Map<String, Object>> getTrackListToChoose(Long trackId) {
+        //获取声音信息
+        TrackInfo trackInfo = getById(trackId);
+        //获取专辑信息
+        Long albumId = trackInfo.getAlbumId();
+        AlbumInfo albumInfo = albumInfoService.getById(albumId);
+        //获取用户已经购买过的声音
+        List<Long> paidTrackIdList = userFeignClient.getPaidTrackIdList(albumId);
+        //获取比当前声音编号大的声音信息
+        LambdaQueryWrapper<TrackInfo> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(TrackInfo::getAlbumId,albumId);
+        wrapper.gt(TrackInfo::getOrderNum,trackInfo.getOrderNum());
+        wrapper.select(TrackInfo::getId);
+        List<TrackInfo> trackInfoList = list(wrapper);
+        List<Long> trackIdList = trackInfoList.stream().map(TrackInfo::getId).collect(Collectors.toList());
+        //未支付的声音id
+        List<Long> noPayTrackIdList = new ArrayList<>();
+        if(CollectionUtils.isEmpty(paidTrackIdList)){
+            noPayTrackIdList=trackIdList;
+        }else{
+            noPayTrackIdList=trackIdList.stream().filter(tempTrackId->!paidTrackIdList
+                    .contains(tempTrackId)).collect(Collectors.toList());
+        }
+        List<Map<String, Object>> list = new ArrayList<>();
+        //本集---写了一个最low的版本 作业---你自己优化
+        if(noPayTrackIdList.size()>=0){
+            Map<String, Object> map=new HashMap<>();
+            map.put("name", "本集");
+            map.put("price", albumInfo.getPrice());
+            map.put("trackCount", 0);
+            list.add(map);
+        }
+        //后多少集
+        if(noPayTrackIdList.size()>0&&noPayTrackIdList.size()<=10){
+            Map<String, Object> map=new HashMap<>();
+            int count = noPayTrackIdList.size();
+            BigDecimal price = albumInfo.getPrice().multiply(new BigDecimal(count));
+            map.put("name", "后"+count+"集");
+            map.put("price", price);
+            map.put("trackCount", count);
+            list.add(map);
+        }
+        if (noPayTrackIdList.size() > 10) {
+            Map<String, Object> map = new HashMap<>();
+            BigDecimal price = albumInfo.getPrice().multiply(new BigDecimal(10));
+            map.put("name", "后10集");
+            map.put("price", price);
+            map.put("trackCount", 10);
+            list.add(map);
+        }
+
+        //后20集
+        if (noPayTrackIdList.size() > 10 && noPayTrackIdList.size() <= 20) {
+            Map<String, Object> map = new HashMap<>();
+            int count = noPayTrackIdList.size();
+            BigDecimal price = albumInfo.getPrice().multiply(new BigDecimal(count));
+            map.put("name", "后" + count + "集");
+            map.put("price", price);
+            map.put("trackCount", count);
+            list.add(map);
+        }
+        if (noPayTrackIdList.size() > 20) {
+            Map<String, Object> map = new HashMap<>();
+            BigDecimal price = albumInfo.getPrice().multiply(new BigDecimal(20));
+            map.put("name", "后20集");
+            map.put("price", price);
+            map.put("trackCount", 20);
+            list.add(map);
+        }
+
+        //后30集
+        if (noPayTrackIdList.size() > 20 && noPayTrackIdList.size() <= 30) {
+            Map<String, Object> map = new HashMap<>();
+            int count = noPayTrackIdList.size();
+            BigDecimal price = albumInfo.getPrice().multiply(new BigDecimal(count));
+            map.put("name", "后" + count + "集");
+            map.put("price", price);
+            map.put("trackCount", count);
+            list.add(map);
+        }
+        if (noPayTrackIdList.size() > 30) {
+            Map<String, Object> map = new HashMap<>();
+            BigDecimal price = albumInfo.getPrice().multiply(new BigDecimal(30));
+            map.put("name", "后30集");
+            map.put("price", price);
+            map.put("trackCount", 30);
+            list.add(map);
+        }
+
+        //后50集
+        if (noPayTrackIdList.size() > 30 && noPayTrackIdList.size() <= 50) {
+            Map<String, Object> map = new HashMap<>();
+            int count = noPayTrackIdList.size();
+            BigDecimal price = albumInfo.getPrice().multiply(new BigDecimal(count));
+            map.put("name", "后" + count + "集");
+            map.put("price", price);
+            map.put("trackCount", count);
+            list.add(map);
+        }
+        if (noPayTrackIdList.size() > 50) {
+            Map<String, Object> map = new HashMap<>();
+            BigDecimal price = albumInfo.getPrice().multiply(new BigDecimal(50));
+            map.put("name", "后50集");
+            map.put("price", price);
+            map.put("trackCount", 50);
+            list.add(map);
+        }
+        return list;
+    }
+
 
     private List<TrackStat> buildTrackStatData(Long trackId) {
         List<TrackStat> trackStatList = new ArrayList<>();

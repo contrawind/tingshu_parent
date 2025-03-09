@@ -141,4 +141,13 @@ public class TrackController {
         return RetVal.ok(pageParam);
     }
 
+    //http://127.0.0.1/api/album/trackInfo/getTrackListToChoose/49169
+    @TingShuLogin
+    @Operation(summary = "")
+    @GetMapping("getTrackListToChoose/{trackId}")
+    public RetVal getTrackListToChoose(@PathVariable Long trackId) {
+        List<Map<String, Object>> list = trackInfoService.getTrackListToChoose(trackId);
+        return RetVal.ok(list);
+    }
+
 }
