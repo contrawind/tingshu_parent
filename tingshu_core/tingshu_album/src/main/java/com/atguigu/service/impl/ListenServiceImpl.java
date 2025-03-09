@@ -3,6 +3,7 @@ package com.atguigu.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.atguigu.constant.KafkaConstant;
 import com.atguigu.constant.SystemConstant;
+import com.atguigu.entity.UserCollect;
 import com.atguigu.entity.UserListenProcess;
 import com.atguigu.service.KafkaService;
 import com.atguigu.service.ListenService;
@@ -114,6 +115,41 @@ public class ListenServiceImpl implements ListenService {
             return listenProcess.getBreakSecond();
         }
         return new BigDecimal(0);
+    }
+
+    @Override
+    public boolean collectTrack(Long trackId) {
+        //获取用户id
+        Long userId = AuthContextHolder.getUserId();
+        //查询mongodb中是否有用户收藏记录
+        Query query = Query.query(Criteria.where("userId").is(userId).and("trackId").is(trackId));
+        long count = mongoTemplate.count(query, MongoUtil.getCollectionName(MongoUtil.MongoCollectionEnum.USER_COLLECT, userId));
+        //判断是否已经收藏
+        if (count == 0) {
+            UserCollect userCollect = new UserCollect();
+            userCollect.setId(ObjectId.get().toString());
+            userCollect.setUserId(userId);
+            userCollect.setTrackId(trackId);
+            userCollect.setCreateTime(new Date());
+            mongoTemplate.save(userCollect, MongoUtil.getCollectionName(MongoUtil.MongoCollectionEnum.USER_COLLECT, userId));
+            //更新声音点赞量
+            TrackStatMqVo trackStatVo = new TrackStatMqVo();
+            trackStatVo.setBusinessNo(UUID.randomUUID().toString().replaceAll("-", ""));
+            trackStatVo.setTarckId(trackId);
+            trackStatVo.setStatType(SystemConstant.COLLECT_NUM_TRACK);
+            trackStatVo.setCount(1);
+            kafkaService.sendMessage(KafkaConstant.UPDATE_TRACK_STAT_QUEUE, JSON.toJSONString(trackStatVo));
+            return true;
+        } else {
+            mongoTemplate.remove(query, MongoUtil.getCollectionName(MongoUtil.MongoCollectionEnum.USER_COLLECT, userId));
+            TrackStatMqVo trackStatVo = new TrackStatMqVo();
+            trackStatVo.setBusinessNo(UUID.randomUUID().toString().replaceAll("-", ""));
+            trackStatVo.setTarckId(trackId);
+            trackStatVo.setStatType(SystemConstant.COLLECT_NUM_TRACK);
+            trackStatVo.setCount(-1);
+            kafkaService.sendMessage(KafkaConstant.UPDATE_TRACK_STAT_QUEUE, JSON.toJSONString(trackStatVo));
+            return false;
+        }
     }
 }
 

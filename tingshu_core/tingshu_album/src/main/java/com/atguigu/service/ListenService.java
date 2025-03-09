@@ -12,4 +12,6 @@ public interface ListenService {
     void updatePlaySecond(UserListenProcessVo userListenProcessVo);
 
     BigDecimal getLastPlaySecond(Long trackId);
+
+    boolean collectTrack(Long trackId);
 }

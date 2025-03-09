@@ -6,12 +6,14 @@ import com.atguigu.entity.BaseCategory3;
 import com.atguigu.entity.BaseCategoryView;
 import com.atguigu.login.TingShuLogin;
 import com.atguigu.mapper.BaseAttributeMapper;
+import com.atguigu.mapper.TrackInfoMapper;
 import com.atguigu.result.RetVal;
 import com.atguigu.service.BaseCategory1Service;
 import com.atguigu.service.BaseCategory3Service;
 import com.atguigu.service.BaseCategoryViewService;
 import com.atguigu.service.ListenService;
 import com.atguigu.vo.CategoryVo;
+import com.atguigu.vo.TrackStatVo;
 import com.atguigu.vo.UserListenProcessVo;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import io.swagger.v3.oas.annotations.Operation;
@@ -59,6 +61,24 @@ public class ListenController {
     public RetVal getLastPlaySecond(@PathVariable Long trackId) {
         BigDecimal second = listenService.getLastPlaySecond(trackId);
         return RetVal.ok(second);
+    }
+
+    @Autowired
+    private TrackInfoMapper trackInfoMapper;
+
+    @Operation(summary = "获取声音的统计信息")
+    @GetMapping("getTrackStatistics/{trackId}")
+    public RetVal getTrackStatistics(@PathVariable Long trackId) {
+        TrackStatVo trackStatVo = trackInfoMapper.getTrackStatistics(trackId);
+        return RetVal.ok(trackStatVo);
+    }
+
+    @TingShuLogin
+    @Operation(summary = "获取声音的统计信息")
+    @GetMapping("collectTrack/{trackId}")
+    public RetVal collectTrack(@PathVariable Long trackId) {
+        boolean flag = listenService.collectTrack(trackId);
+        return RetVal.ok(flag);
     }
 
     @TingShuLogin(required = true)

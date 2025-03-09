@@ -87,4 +87,21 @@
         GROUP BY c.trackId
         ORDER BY c.orderNum asc
     </select>
+    <select id="getTrackStatistics" resultType="com.atguigu.vo.TrackStatVo">
+        select
+            MAX(IF(b.statType = '0701', b.statNum, 0)) as playStatNum,
+            MAX(IF(b.statType = '0702', b.statNum, 0)) as collectStatNum,
+            MAX(IF(b.statType = '0703', b.statNum, 0)) as praiseStatNum,
+            MAX(IF(b.statType = '0704', b.statNum, 0)) as commentStatNum
+        from  (SELECT
+                   a.track_id AS trackId,
+                   a.stat_type AS statType,
+                   a.stat_num AS statNum
+               FROM
+                   track_stat a
+               WHERE
+                   a.track_id = #{trackId}) b
+        GROUP BY b.trackId
+    </select>
+
 </mapper>
