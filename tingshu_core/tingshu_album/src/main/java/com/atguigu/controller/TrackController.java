@@ -143,11 +143,19 @@ public class TrackController {
 
     //http://127.0.0.1/api/album/trackInfo/getTrackListToChoose/49169
     @TingShuLogin
-    @Operation(summary = "")
+    @Operation(summary = "根据声音ID查询可选择的专辑列表")
     @GetMapping("getTrackListToChoose/{trackId}")
     public RetVal getTrackListToChoose(@PathVariable Long trackId) {
         List<Map<String, Object>> list = trackInfoService.getTrackListToChoose(trackId);
         return RetVal.ok(list);
+    }
+
+
+    @Operation(summary = "获取即将购买的声音列表")
+    @GetMapping("getTrackListPrepareToBuy/{trackId}/{buyNum}")
+    public RetVal<List<TrackInfo>> getTrackListPrepareToBuy(@PathVariable Long trackId, @PathVariable Integer buyNum) {
+        List<TrackInfo> trackInfoList = trackInfoService.getTrackListPrepareToBuy(trackId, buyNum);
+        return RetVal.ok(trackInfoList);
     }
 
 }

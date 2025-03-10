@@ -5,6 +5,9 @@ import com.atguigu.UserFeignClient;
 import com.atguigu.constant.SystemConstant;
 import com.atguigu.entity.AlbumInfo;
 import com.atguigu.entity.OrderDerate;
+import com.atguigu.entity.TrackInfo;
+import com.atguigu.execption.GuiguException;
+import com.atguigu.result.ResultCodeEnum;
 import com.atguigu.service.OrderInfoService;
 import com.atguigu.util.AuthContextHolder;
 import com.atguigu.vo.*;
@@ -14,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class OrderInfoServiceImpl implements OrderInfoService {
@@ -71,6 +75,32 @@ public class OrderInfoServiceImpl implements OrderInfoService {
             }
         }
         //购买多个声音
+        else if (tradeVo.getItemType().equals(SystemConstant.BUY_TRACK)) {
+            if (tradeVo.getTrackCount() < 0)
+                //参数校验异常
+                throw new GuiguException(ResultCodeEnum.ARGUMENT_VALID_ERROR);
+            List<TrackInfo> prepareToBuyTrackList = albumFeignClient.getTrackListPrepareToBuy(tradeVo.getItemId(), tradeVo.getTrackCount()).getData();
+            //拿到专辑信息  该声音列表所有的声音的专辑id都是一样的
+            AlbumInfo albumInfo = albumFeignClient.getAlbumInfoById(prepareToBuyTrackList.get(0).getAlbumId()).getData();
+            if (tradeVo.getTrackCount() > 0) {
+                originalPrice = albumInfo.getPrice().multiply(new BigDecimal(tradeVo.getTrackCount()));
+                finalPrice = originalPrice;
+            } else {
+                originalPrice = albumInfo.getPrice();
+                finalPrice = originalPrice;
+            }
+            //订单明细信息
+            orderDetailVoList = prepareToBuyTrackList.stream().map(prepareToBuy -> {
+                OrderDetailVo orderDetailVo = new OrderDetailVo();
+                orderDetailVo.setItemId(prepareToBuy.getId());
+                orderDetailVo.setItemName(prepareToBuy.getTrackTitle());
+                orderDetailVo.setItemUrl(prepareToBuy.getCoverUrl());
+                orderDetailVo.setItemPrice(albumInfo.getPrice());
+                return orderDetailVo;
+            }).collect(Collectors.toList());
+
+
+        }
         //购买Vip会员
         OrderInfoVo orderInfoVo = new OrderInfoVo();
         orderInfoVo.setItemType(tradeVo.getItemType());

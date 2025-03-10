@@ -183,34 +183,34 @@ public class TrackInfoServiceImpl extends ServiceImpl<TrackInfoMapper, TrackInfo
         List<Long> paidTrackIdList = userFeignClient.getPaidTrackIdList(albumId);
         //获取比当前声音编号大的声音信息
         LambdaQueryWrapper<TrackInfo> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(TrackInfo::getAlbumId,albumId);
-        wrapper.gt(TrackInfo::getOrderNum,trackInfo.getOrderNum());
+        wrapper.eq(TrackInfo::getAlbumId, albumId);
+        wrapper.gt(TrackInfo::getOrderNum, trackInfo.getOrderNum());
         wrapper.select(TrackInfo::getId);
         List<TrackInfo> trackInfoList = list(wrapper);
         List<Long> trackIdList = trackInfoList.stream().map(TrackInfo::getId).collect(Collectors.toList());
         //未支付的声音id
         List<Long> noPayTrackIdList = new ArrayList<>();
-        if(CollectionUtils.isEmpty(paidTrackIdList)){
-            noPayTrackIdList=trackIdList;
-        }else{
-            noPayTrackIdList=trackIdList.stream().filter(tempTrackId->!paidTrackIdList
+        if (CollectionUtils.isEmpty(paidTrackIdList)) {
+            noPayTrackIdList = trackIdList;
+        } else {
+            noPayTrackIdList = trackIdList.stream().filter(tempTrackId -> !paidTrackIdList
                     .contains(tempTrackId)).collect(Collectors.toList());
         }
         List<Map<String, Object>> list = new ArrayList<>();
         //本集---写了一个最low的版本 作业---你自己优化
-        if(noPayTrackIdList.size()>=0){
-            Map<String, Object> map=new HashMap<>();
+        if (noPayTrackIdList.size() >= 0) {
+            Map<String, Object> map = new HashMap<>();
             map.put("name", "本集");
             map.put("price", albumInfo.getPrice());
             map.put("trackCount", 0);
             list.add(map);
         }
         //后多少集
-        if(noPayTrackIdList.size()>0&&noPayTrackIdList.size()<=10){
-            Map<String, Object> map=new HashMap<>();
+        if (noPayTrackIdList.size() > 0 && noPayTrackIdList.size() <= 10) {
+            Map<String, Object> map = new HashMap<>();
             int count = noPayTrackIdList.size();
             BigDecimal price = albumInfo.getPrice().multiply(new BigDecimal(count));
-            map.put("name", "后"+count+"集");
+            map.put("name", "后" + count + "集");
             map.put("price", price);
             map.put("trackCount", count);
             list.add(map);
@@ -281,6 +281,29 @@ public class TrackInfoServiceImpl extends ServiceImpl<TrackInfoMapper, TrackInfo
             list.add(map);
         }
         return list;
+    }
+
+    @Override
+    public List<TrackInfo> getTrackListPrepareToBuy(Long trackId, Integer buyNum) {
+        //根据trackId获得专辑信息
+        TrackInfo trackInfo = getById(trackId);
+        List<TrackInfo> prepareToBuyTrackList = new ArrayList<>();
+        //用户已经购买过的声音
+        List<Long> paidTrackIdList = userFeignClient.getPaidTrackIdList(trackInfo.getAlbumId());
+        if (buyNum > 0) {
+            LambdaQueryWrapper<TrackInfo> wrapper = new LambdaQueryWrapper<>();
+            wrapper.eq(TrackInfo::getAlbumId, trackInfo.getAlbumId());
+            wrapper.gt(TrackInfo::getOrderNum, trackInfo.getOrderNum());
+            wrapper.orderByAsc(TrackInfo::getOrderNum);
+            if (!CollectionUtils.isEmpty(paidTrackIdList)) {
+                wrapper.notIn(TrackInfo::getId, paidTrackIdList);
+            }
+            wrapper.last("limit " + buyNum);
+            prepareToBuyTrackList = list(wrapper);
+        } else {
+            prepareToBuyTrackList.add(trackInfo);
+        }
+        return prepareToBuyTrackList;
     }
 
 

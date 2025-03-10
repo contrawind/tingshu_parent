@@ -5,28 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ae9db2f1-8fa3-44e7-890c-c71b2c51685b" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tingshu_core/tingshu_order/pom.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tingshu_core/tingshu_order/src/main/java/com/atguigu/OrderApplication.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tingshu_core/tingshu_order/src/main/java/com/atguigu/controller/OrderController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tingshu_core/tingshu_order/src/main/java/com/atguigu/controller/OrderDetailController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tingshu_core/tingshu_order/src/main/java/com/atguigu/mapper/OrderDetailMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tingshu_core/tingshu_order/src/main/java/com/atguigu/mapper/OrderInfoMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tingshu_core/tingshu_order/src/main/java/com/atguigu/mapper/xml/OrderDetailMapper.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tingshu_core/tingshu_order/src/main/java/com/atguigu/mapper/xml/OrderInfoMapper.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tingshu_core/tingshu_order/src/main/java/com/atguigu/service/OrderDetailService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tingshu_core/tingshu_order/src/main/java/com/atguigu/service/OrderInfoService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tingshu_core/tingshu_order/src/main/java/com/atguigu/service/impl/OrderDetailServiceImpl.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tingshu_core/tingshu_order/src/main/java/com/atguigu/service/impl/OrderInfoServiceImpl.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tingshu_core/tingshu_order/src/main/resources/application.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tingshu_core/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/tingshu_core/pom.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tingshu_core/tingshu_album/src/main/java/com/atguigu/controller/TrackController.java" beforeDir="false" afterPath="$PROJECT_DIR$/tingshu_core/tingshu_album/src/main/java/com/atguigu/controller/TrackController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tingshu_core/tingshu_album/src/main/java/com/atguigu/service/TrackInfoService.java" beforeDir="false" afterPath="$PROJECT_DIR$/tingshu_core/tingshu_album/src/main/java/com/atguigu/service/TrackInfoService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tingshu_core/tingshu_album/src/main/java/com/atguigu/service/impl/TrackInfoServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/tingshu_core/tingshu_album/src/main/java/com/atguigu/service/impl/TrackInfoServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tingshu_core/tingshu_user/src/main/java/com/atguigu/controller/UserInfoController.java" beforeDir="false" afterPath="$PROJECT_DIR$/tingshu_core/tingshu_user/src/main/java/com/atguigu/controller/UserInfoController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tingshu_feign_client/src/main/java/com/atguigu/UserFeignClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/tingshu_feign_client/src/main/java/com/atguigu/UserFeignClient.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tingshu_core/tingshu_order/src/main/java/com/atguigu/service/impl/OrderInfoServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/tingshu_core/tingshu_order/src/main/java/com/atguigu/service/impl/OrderInfoServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tingshu_feign_client/src/main/java/com/atguigu/AlbumFeignClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/tingshu_feign_client/src/main/java/com/atguigu/AlbumFeignClient.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -223,10 +207,10 @@
     </configuration>
     <list>
       <item itemvalue="Compound.start" />
+      <item itemvalue="Spring Boot.UserApplication" />
       <item itemvalue="Spring Boot.AlbumApplication" />
       <item itemvalue="Spring Boot.GatewayApplication" />
       <item itemvalue="Spring Boot.SearchApplication" />
-      <item itemvalue="Spring Boot.UserApplication" />
       <item itemvalue="Spring Boot.OrderApplication" />
     </list>
   </component>
@@ -249,7 +233,7 @@
       <workItem from="1741162421755" duration="279000" />
       <workItem from="1741162727446" duration="41352000" />
       <workItem from="1741400904426" duration="21390000" />
-      <workItem from="1741496531954" duration="21097000" />
+      <workItem from="1741496531954" duration="24926000" />
     </task>
     <servers />
   </component>
